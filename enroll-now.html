@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enroll Now | Student Course Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-requires-auth="student">
+<nav>
+<div class="logo">SCMS</div>
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="courses.html">Courses</a></li>
+<li><a href="student-dashboard.html">Dashboard</a></li>
+<li><a href="index.html">Logout</a></li>
+</ul>
+</nav>
+<div class="container">
+<div class="form-box">
+<h1>Course Enrollment</h1>
+<p>Complete the form below to enroll in your selected course.</p>
+<form id="enrollForm">
+	<div class="form-group">
+		<label>Student Name</label>
+		<input type="text" id="studentName" placeholder="Enter your full name">
+	</div>
+	<div class="form-group">
+		<label>Email Address</label>
+		<input type="email" id="email" placeholder="Enter your email">
+	</div>
+	<div class="form-group">
+		<label>Phone Number</label>
+		<input type="tel" id="phone" placeholder="Enter your mobile number">
+	</div>
+	<div class="form-group">
+		<label>Course</label>
+		<select id="department">
+			<option value="">Select Course</option>
+			<option>Machine Learning</option>
+			<option>Deep Learning</option>
+			<option>Large Language Models</option>
+			<option>Natural Language Processing</option>
+			<option>Computer Vision</option>
+			<option>Generative AI</option>
+			<option>Python Programming</option>
+			<option>Data Science</option>
+			<option>Cloud Computing</option>
+			<option>Cyber Security</option>
+			<option>Blockchain</option>
+			<option>Internet of Things</option>
+			<option>Big Data Analytics</option>
+			<option>DevOps</option>
+			<option>Data Structures &amp; Algorithms</option>
+			</select>
+	</div>
+	<div class="form-group">
+		<label>Selected Course</label>
+		<input id="course" readonly>
+	</div>
+	<div class="form-group">
+		<label>Enrollment Date</label>
+		<input type="date" id="date">
+	</div>
+	<div class="form-group">
+		<label>Additional Notes</label>
+		<textarea rows="4" id="notes" placeholder="Optional remarks"></textarea>
+	</div>
+	<div class="button-group">
+		<button type="submit">Enroll Now</button>
+		<button type="reset">Reset</button>
+		<a href="courses.html">Back</a>
+	</div>
+	<div id="successMessage">Enrollment Successful!</div>
+</form>
+</div>
+</div>
+<footer>
+© 2026 Student Course Management System
+</footer>
+<script src="state.js"></script>
+<script src="validation.js"></script>
+</body>
+</html>

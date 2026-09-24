@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports | Student Course Management System</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body data-requires-auth="admin">
+<nav>
+<div class="logo">SCMS Admin</div>
+<ul>
+<li><a href="admin-dashboard.html">Dashboard</a></li>
+<li><a href="students.html">Students</a></li>
+<li><a href="courses.html">Courses</a></li>
+<li><a href="enrollment.html">Enrollment</a></li>
+<li><a href="reports.html">Reports</a></li>
+<li><a href="index.html">Logout</a></li>
+</ul>
+</nav>
+
+<div class="header">
+<h1>Reports</h1>
+<p>Academic and enrollment summary for the Student Course Management System.</p>
+</div>
+
+<section class="stats">
+<div class="box">
+<h3>Total Students</h3>
+<h1 id="reportTotalStudents">0</h1>
+</div>
+<div class="box">
+<h3>Total Courses</h3>
+<h1 id="reportTotalCourses">0</h1>
+</div>
+<div class="box">
+<h3>Total Enrollments</h3>
+<h1 id="reportTotalEnrollments">0</h1>
+</div>
+</section>
+
+<h2 class="report-table-title">Enrollments by Course</h2>
+
+<div class="table-wrapper">
+<table class="admin-table">
+<thead>
+<tr>
+<th>Course</th>
+<th>Enrollments</th>
+<th>Share</th>
+</tr>
+</thead>
+<tbody id="reportTableBody"></tbody>
+</table>
+</div>
+
+<footer>
+© 2026 Student Course Management System | Reports
+</footer>
+<script src="state.js"></script>
+<script src="validation.js"></script>
+</body>
+</html>

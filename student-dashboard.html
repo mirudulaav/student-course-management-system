@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard | SCMS</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<nav>
+
+    <div class="logo">SCMS</div>
+
+    <ul>
+        <li>
+            <a href="student-dashboard.html" class="active">
+                Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="student-courses.html">
+                Courses
+            </a>
+        </li>
+
+        <li>
+            <a href="enroll-now.html">
+                Enroll
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                Logout
+            </a>
+        </li>
+    </ul>
+
+</nav>
+
+
+<div class="header">
+
+    <h1 id="studentWelcome">
+        Hello, Student
+    </h1>
+
+    <p>
+        Welcome to your academic space. Explore available
+        courses and monitor your learning progress.
+    </p>
+
+</div>
+
+
+<!-- STUDENT STATISTICS -->
+
+<div class="stats">
+
+    <div class="box">
+        <h3>Enrolled Courses</h3>
+        <h1 id="studentEnrolledCount">0</h1>
+    </div>
+
+    <div class="box">
+        <h3>Completed</h3>
+        <h1 id="studentCompletedCount">0</h1>
+    </div>
+
+    <div class="box">
+        <h3>Certificates</h3>
+        <h1 id="studentCertificateCount">0</h1>
+    </div>
+
+    <div class="box">
+        <h3>Overall Progress</h3>
+        <h1 id="studentOverallProgress">0%</h1>
+    </div>
+
+</div>
+
+
+<!-- STUDENT ACTIONS -->
+
+<div class="dashboard">
+
+    <div class="card">
+
+        <h2>Available Courses</h2>
+
+        <p>
+            Explore the technology courses currently
+            available for enrollment.
+        </p>
+
+        <a href="student-courses.html" class="btn">
+            Browse Courses
+        </a>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>New Enrollment</h2>
+
+        <p>
+            Select an available course and submit
+            your enrollment request.
+        </p>
+
+        <a href="enroll-now.html" class="btn">
+            Enroll Now
+        </a>
+
+    </div>
+
+</div>
+
+<div class="course-preview">
+
+    <h2>My Learning Progress</h2>
+
+    <div id="studentCourseList" class="course-list">
+
+    </div>
+
+</div>
+
+
+<footer>
+    © 2026 Student Course Management System | Student Dashboard
+</footer>
+
+
+<script src="state.js"></script>
+<script src="validation.js"></script>
+
+</body>
+</html>
