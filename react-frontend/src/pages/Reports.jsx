@@ -1,69 +1,30 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import { useCourses } from "../context/CourseContext";
+import { useStudents } from "../context/StudentContext";
 import PageShell from "../components/PageShell";
 
 function Reports() {
   const navigate = useNavigate();
 
-  const admin = JSON.parse(
-    sessionStorage.getItem("loggedInAdmin") || "null"
-  );
+  const { loggedInAdmin } = useAuth();
 
-  const students = JSON.parse(
-    sessionStorage.getItem("students") || "[]"
-  );
+  const {
+    courses,
+    loading: coursesLoading
+  } = useCourses();
 
-  const enrollments = JSON.parse(
-    sessionStorage.getItem("enrollments") || "[]"
-  );
+  const {
+    students,
+    enrollments,
+    loading: studentsLoading
+  } = useStudents();
 
-  const completed = enrollments.filter(
-    (enrollment) => enrollment.status === "Completed"
-  ).length;
+  if (coursesLoading || studentsLoading) {
+    return <p>Loading reports...</p>;
+  }
 
-  const inProgress = enrollments.filter(
-    (enrollment) => enrollment.status !== "Completed"
-  ).length;
-
-  const averageProgress =
-    enrollments.length > 0
-      ? Math.round(
-          enrollments.reduce(
-            (total, enrollment) =>
-              total + Number(enrollment.progress || 0),
-            0
-          ) / enrollments.length
-        )
-      : 0;
-
-  const courseReport = enrollments.reduce((result, enrollment) => {
-    const courseName = enrollment.course;
-
-    if (!result[courseName]) {
-      result[courseName] = {
-        name: courseName,
-        enrollments: 0,
-        progress: 0
-      };
-    }
-
-    result[courseName].enrollments += 1;
-    result[courseName].progress += Number(
-      enrollment.progress || 0
-    );
-
-    return result;
-  }, {});
-
-  const courseReports = Object.values(courseReport).map(
-    (course) => ({
-      ...course,
-      progress: Math.round(
-        course.progress / course.enrollments
-      )
-    })
-  );
-
-  if (!admin) {
+  if (!loggedInAdmin) {
     return (
       <PageShell>
         <main className="container">
@@ -86,6 +47,69 @@ function Reports() {
     );
   }
 
+  const totalStudents = students.length;
+  const totalCourses = courses.length;
+  const totalEnrollments = enrollments.length;
+
+  const completed = enrollments.filter(
+    (enrollment) =>
+      enrollment.status === "Completed"
+  ).length;
+
+  const inProgress = enrollments.filter(
+    (enrollment) =>
+      enrollment.status !== "Completed"
+  ).length;
+
+  const averageProgress =
+    enrollments.length > 0
+      ? Math.round(
+          enrollments.reduce(
+            (total, enrollment) =>
+              total +
+              Number(enrollment.progress || 0),
+            0
+          ) / enrollments.length
+        )
+      : 0;
+
+  const courseReport = {};
+
+  enrollments.forEach((enrollment) => {
+    const course = courses.find(
+      (item) =>
+        String(item.id) ===
+        String(enrollment.courseId)
+    );
+
+    if (!course) {
+      return;
+    }
+
+    if (!courseReport[course.id]) {
+      courseReport[course.id] = {
+        name: course.courseName,
+        enrollments: 0,
+        progress: 0
+      };
+    }
+
+    courseReport[course.id].enrollments += 1;
+
+    courseReport[course.id].progress += Number(
+      enrollment.progress || 0
+    );
+  });
+
+  const courseReports = Object.values(
+    courseReport
+  ).map((course) => ({
+    ...course,
+    progress: Math.round(
+      course.progress / course.enrollments
+    )
+  }));
+
   return (
     <PageShell>
       <main className="reports-page">
@@ -105,7 +129,9 @@ function Reports() {
 
           <button
             className="secondary-button"
-            onClick={() => navigate("/admin-dashboard")}
+            onClick={() =>
+              navigate("/admin-dashboard")
+            }
           >
             ← Dashboard
           </button>
@@ -114,12 +140,12 @@ function Reports() {
         <section className="report-summary">
           <div className="report-summary-card">
             <span>TOTAL STUDENTS</span>
-            <strong>{students.length}</strong>
+            <strong>{totalStudents}</strong>
           </div>
 
           <div className="report-summary-card">
             <span>TOTAL ENROLLMENTS</span>
-            <strong>{enrollments.length}</strong>
+            <strong>{totalEnrollments}</strong>
           </div>
 
           <div className="report-summary-card">
@@ -130,6 +156,11 @@ function Reports() {
           <div className="report-summary-card">
             <span>COMPLETED</span>
             <strong>{completed}</strong>
+          </div>
+
+          <div className="report-summary-card">
+            <span>TOTAL COURSES</span>
+            <strong>{totalCourses}</strong>
           </div>
         </section>
 
@@ -195,40 +226,51 @@ function Reports() {
                 </thead>
 
                 <tbody>
-                  {courseReports.map((course, index) => (
-                    <tr key={course.name}>
-                      <td>
-                        {String(index + 1).padStart(2, "0")}
-                      </td>
+                  {courseReports.map(
+                    (course, index) => (
+                      <tr key={course.name}>
+                        <td>
+                          {String(index + 1).padStart(
+                            2,
+                            "0"
+                          )}
+                        </td>
 
-                      <td>
-                        <strong>{course.name}</strong>
-                      </td>
+                        <td>
+                          <strong>
+                            {course.name}
+                          </strong>
+                        </td>
 
-                      <td>{course.enrollments}</td>
+                        <td>
+                          {course.enrollments}
+                        </td>
 
-                      <td>
-                        <div className="table-progress">
-                          <div className="table-progress-bar">
-                            <div
-                              className="progress-fill"
-                              style={{
-                                width: `${course.progress}%`
-                              }}
-                            ></div>
+                        <td>
+                          <div className="table-progress">
+                            <div className="table-progress-bar">
+                              <div
+                                className="progress-fill"
+                                style={{
+                                  width: `${course.progress}%`
+                                }}
+                              ></div>
+                            </div>
+
+                            <span>
+                              {course.progress}%
+                            </span>
                           </div>
+                        </td>
 
-                          <span>{course.progress}%</span>
-                        </div>
-                      </td>
-
-                      <td>
-                        {course.progress === 100
-                          ? "Completed"
-                          : "In Progress"}
-                      </td>
-                    </tr>
-                  ))}
+                        <td>
+                          {course.progress === 100
+                            ? "Completed"
+                            : "In Progress"}
+                        </td>
+                      </tr>
+                    )
+                  )}
                 </tbody>
               </table>
             </div>

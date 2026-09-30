@@ -1,64 +1,38 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import { useStudents } from "../context/StudentContext";
 import PageShell from "../components/PageShell";
 
 function EnrollNow() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const { loggedInStudent } = useAuth();
+  const { enroll } = useStudents();
+
   const course = location.state?.course;
 
-  const student = JSON.parse(
-    sessionStorage.getItem("loggedInStudent") || "null"
-  );
-
-  function handleEnroll(e) {
-    e.preventDefault();
-
-    if (!student) {
-      alert("Please login as a student before enrolling.");
-      navigate("/login");
+  async function handleEnroll() {
+    if (!loggedInStudent || !course) {
       return;
     }
 
-    const enrollments = JSON.parse(
-      sessionStorage.getItem("enrollments") || "[]"
-    );
+    try {
+      const newEnrollment = await enroll(
+        loggedInStudent.id,
+        course.id
+      );
 
-    const alreadyEnrolled = enrollments.some(
-      (enrollment) =>
-        enrollment.studentEmail === student.email &&
-        enrollment.courseId === course.id
-    );
-
-    if (alreadyEnrolled) {
-      alert("You are already enrolled in this course.");
-      navigate("/student-dashboard");
-      return;
+      navigate("/enrollment", {
+        state: {
+          course,
+          enrollment: newEnrollment
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      alert("Unable to enroll in this course.");
     }
-
-    const newEnrollment = {
-      id: "enr-" + Date.now(),
-      studentEmail: student.email,
-      studentName: student.fullname,
-      courseId: course.id,
-      course: course.title,
-      level: course.level,
-      duration: course.duration,
-      enrolledAt: new Date().toLocaleDateString(),
-      progress: 0,
-      status: "In Progress"
-    };
-
-    enrollments.push(newEnrollment);
-
-    sessionStorage.setItem(
-      "enrollments",
-      JSON.stringify(enrollments)
-    );
-
-    alert("Successfully enrolled in the course!");
-
-    navigate("/student-dashboard");
   }
 
   if (!course) {
@@ -67,9 +41,11 @@ function EnrollNow() {
         <main className="container">
           <div className="empty-state">
             <h1>Course Not Found</h1>
+
             <p>
               Please return to the courses page and select a course.
             </p>
+
             <button
               className="primary-button"
               onClick={() => navigate("/courses")}
@@ -82,7 +58,7 @@ function EnrollNow() {
     );
   }
 
-  if (!student) {
+  if (!loggedInStudent) {
     return (
       <PageShell>
         <main className="enroll-page">
@@ -100,8 +76,10 @@ function EnrollNow() {
 
             <div className="enroll-course-preview">
               <span>COURSE</span>
-              <h2>{course.title}</h2>
-              <p>{course.description}</p>
+
+              <h2>{course.courseName}</h2>
+
+              <p>{course.overview}</p>
             </div>
 
             <button
@@ -129,9 +107,11 @@ function EnrollNow() {
         <section className="enroll-card">
           <button
             className="back-button"
-            onClick={() => navigate("/course-details", {
-              state: { course }
-            })}
+            onClick={() =>
+              navigate("/course-details", {
+                state: { course }
+              })
+            }
           >
             ← Back to Course
           </button>
@@ -152,35 +132,46 @@ function EnrollNow() {
           <div className="enroll-course-preview">
             <div className="enroll-course-top">
               <span>
-                COURSE {String(course.id).padStart(2, "0")}
+                COURSE{" "}
+                {String(course.id).padStart(2, "0")}
               </span>
 
               <span>{course.level}</span>
             </div>
 
-            <h2>{course.title}</h2>
+            <h2>{course.courseName}</h2>
 
-            <p>{course.description}</p>
+            <p>{course.overview}</p>
 
             <div className="enroll-course-meta">
               <div>
                 <span>Duration</span>
+
                 <strong>{course.duration}</strong>
               </div>
 
               <div>
                 <span>Level</span>
+
                 <strong>{course.level}</strong>
               </div>
 
               <div>
                 <span>Student</span>
-                <strong>{student.fullname}</strong>
+
+                <strong>
+                  {loggedInStudent.name}
+                </strong>
               </div>
             </div>
           </div>
 
-          <form onSubmit={handleEnroll}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleEnroll();
+            }}
+          >
             <div className="enroll-confirmation">
               <h3>Ready to begin?</h3>
 

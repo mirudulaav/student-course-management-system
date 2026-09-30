@@ -1,15 +1,15 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import PageShell from "../components/PageShell";
 
 function Enrollment() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const course = location.state?.course;
+  const { loggedInStudent } = useAuth();
 
-  const student = JSON.parse(
-    sessionStorage.getItem("loggedInStudent") || "null"
-  );
+  const course = location.state?.course;
+  const enrollment = location.state?.enrollment;
 
   if (!course) {
     return (
@@ -17,9 +17,11 @@ function Enrollment() {
         <main className="container">
           <div className="empty-state">
             <h1>Enrollment Details Not Found</h1>
+
             <p>
               Please select a course from the courses page.
             </p>
+
             <button
               className="primary-button"
               onClick={() => navigate("/courses")}
@@ -32,6 +34,13 @@ function Enrollment() {
     );
   }
 
+  const progress = Number(
+    enrollment?.progress || 0
+  );
+
+  const status =
+    enrollment?.status || "Enrolled";
+
   return (
     <PageShell>
       <main className="enrollment-page">
@@ -41,7 +50,7 @@ function Enrollment() {
               ENROLLMENT DETAILS
             </span>
 
-            <h1>{course.title}</h1>
+            <h1>{course.courseName}</h1>
 
             <p>
               View your enrollment information and course details.
@@ -50,7 +59,9 @@ function Enrollment() {
 
           <button
             className="back-button"
-            onClick={() => navigate("/student-dashboard")}
+            onClick={() =>
+              navigate("/student-dashboard")
+            }
           >
             ← Dashboard
           </button>
@@ -60,66 +71,79 @@ function Enrollment() {
           <div className="enrollment-main-card">
             <div className="enrollment-status">
               <span>ENROLLMENT STATUS</span>
-              <strong>Active</strong>
+
+              <strong>{status}</strong>
             </div>
 
-            <h2>{course.title}</h2>
+            <h2>{course.courseName}</h2>
 
             <p className="enrollment-description">
-              {course.description}
+              {course.overview}
             </p>
 
             <div className="enrollment-details-grid">
               <div className="detail">
                 <span>Student Name</span>
+
                 <strong>
-                  {student?.fullname || "Student"}
+                  {loggedInStudent?.name ||
+                    "Student"}
                 </strong>
               </div>
 
               <div className="detail">
                 <span>Student Email</span>
+
                 <strong>
-                  {student?.email || "Not available"}
+                  {loggedInStudent?.email ||
+                    "Not available"}
                 </strong>
               </div>
 
               <div className="detail">
                 <span>Course Level</span>
+
                 <strong>{course.level}</strong>
               </div>
 
               <div className="detail">
                 <span>Duration</span>
+
                 <strong>{course.duration}</strong>
               </div>
 
               <div className="detail">
                 <span>Progress</span>
-                <strong>0%</strong>
+
+                <strong>{progress}%</strong>
               </div>
 
               <div className="detail">
                 <span>Course Status</span>
-                <strong>In Progress</strong>
+
+                <strong>{status}</strong>
               </div>
             </div>
 
             <div className="enrollment-progress">
               <div className="progress-heading">
                 <span>Learning Progress</span>
-                <strong>0%</strong>
+
+                <strong>{progress}%</strong>
               </div>
 
               <div className="progress-track">
                 <div
                   className="progress-fill"
-                  style={{ width: "0%" }}
+                  style={{
+                    width: `${progress}%`
+                  }}
                 ></div>
               </div>
 
               <p>
-                Start learning to update your course progress.
+                Continue learning to improve your course
+                progress.
               </p>
             </div>
           </div>

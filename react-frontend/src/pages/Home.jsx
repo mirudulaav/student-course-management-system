@@ -64,7 +64,7 @@ function Home() {
 
               <div className="hero-stat-row">
                 <div>
-                  <strong>15+</strong>
+                  <strong>15</strong>
                   <span>Courses</span>
                 </div>
 

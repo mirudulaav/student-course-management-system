@@ -1,70 +1,74 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import api from "../services/api";
 import PageShell from "../components/PageShell";
 
 function ResetPassword() {
   const navigate = useNavigate();
 
-  function handleReset(e) {
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleReset(e) {
     e.preventDefault();
 
     const form = e.target;
 
     const email = form.email.value.trim();
     const newPassword = form.newPassword.value;
-    const confirmPassword = form.confirmPassword.value;
+    const confirmPassword =
+      form.confirmPassword.value;
 
-    const account = JSON.parse(
-      sessionStorage.getItem("student") || "null"
-    );
-
-    if (!account) {
-      alert("No student account found. Please register first.");
-      return;
-    }
-
-    if (account.email !== email) {
-      alert("No account found with this email.");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      alert("Password must contain at least 6 characters.");
+    if (newPassword.length < 8) {
+      setError(
+        "Password must contain at least 8 characters."
+      );
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      alert("Passwords do not match.");
+      setError("Passwords do not match.");
       return;
     }
 
-    account.password = newPassword;
+    try {
+      setLoading(true);
+      setError("");
 
-    sessionStorage.setItem(
-      "student",
-      JSON.stringify(account)
-    );
+      const response = await api.get(
+        `/students?email=${encodeURIComponent(email)}`
+      );
 
-    const students = JSON.parse(
-      sessionStorage.getItem("students") || "[]"
-    );
+      const student = response.data[0];
 
-    const updatedStudents = students.map((student) =>
-      student.email === email
-        ? {
-            ...student,
-            password: newPassword
-          }
-        : student
-    );
+      if (!student) {
+        setError(
+          "No account found with this email."
+        );
+        return;
+      }
 
-    sessionStorage.setItem(
-      "students",
-      JSON.stringify(updatedStudents)
-    );
+      await api.patch(
+        `/students/${student.id}`,
+        {
+          password: newPassword
+        }
+      );
 
-    alert("Password reset successfully.");
+      alert(
+        "Password reset successfully."
+      );
 
-    navigate("/login");
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        "Unable to reset password. Please make sure JSON Server is running."
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -82,6 +86,12 @@ function ResetPassword() {
               Create a new password for your student account.
             </p>
           </div>
+
+          {error && (
+            <p className="form-error">
+              {error}
+            </p>
+          )}
 
           <form onSubmit={handleReset}>
             <div className="input-group">
@@ -120,14 +130,18 @@ function ResetPassword() {
             <button
               type="submit"
               className="auth-button"
+              disabled={loading}
             >
-              Reset Password
+              {loading
+                ? "Resetting..."
+                : "Reset Password"}
             </button>
           </form>
 
           <div className="auth-links">
             <p>
               Remember your password?
+
               <button
                 onClick={() => navigate("/login")}
               >

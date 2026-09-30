@@ -48,10 +48,10 @@ function CourseDetails() {
               COURSE {String(course.id).padStart(2, "0")}
             </span>
 
-            <h1>{course.title}</h1>
+            <h1>{course.courseName}</h1>
 
             <p>
-              {course.description}
+              {course.overview}
             </p>
 
             <div className="course-meta">
@@ -92,7 +92,7 @@ function CourseDetails() {
               <p>
                 This course is designed to help students develop
                 practical knowledge and understanding of
-                {` ${course.title}`}.
+                {` ${course.courseName}`}.
               </p>
 
               <p>
@@ -129,7 +129,7 @@ function CourseDetails() {
               START LEARNING
             </span>
 
-            <h2>{course.title}</h2>
+            <h2>{course.courseName}</h2>
 
             <p>
               Enroll in this course and begin tracking your

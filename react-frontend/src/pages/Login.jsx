@@ -1,34 +1,56 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
+import { useAuth } from "../auth/AuthContext";
 import PageShell from "../components/PageShell";
 
 function Login() {
   const navigate = useNavigate();
 
-  function handleStudentLogin(e) {
+  const {
+    loginStudent,
+    loginAdmin
+  } = useAuth();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleStudentLogin(e) {
     e.preventDefault();
 
-    const form = e.target;
-    const email = form.email.value.trim();
-    const password = form.password.value;
+    try {
+      setLoading(true);
+      setError("");
 
-    const account = JSON.parse(
-      sessionStorage.getItem("student") || "null"
-    );
-
-    if (!account) {
-      alert("No student account found. Please register first.");
-      return;
-    }
-
-    if (account.email === email && account.password === password) {
-      sessionStorage.setItem(
-        "loggedInStudent",
-        JSON.stringify(account)
+      const response = await api.get(
+        `/students?email=${encodeURIComponent(email)}`
       );
 
+      const student = response.data[0];
+
+      if (
+        !student ||
+        student.password !== password
+      ) {
+        setError(
+          "Invalid email or password."
+        );
+        return;
+      }
+
+      loginStudent(student);
+
       navigate("/student-dashboard");
-    } else {
-      alert("Invalid student email or password.");
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        "Unable to connect to the server."
+      );
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -36,37 +58,39 @@ function Login() {
     e.preventDefault();
 
     const form = e.target;
-    const email = form.email.value.trim();
-    const password = form.password.value;
+
+    const adminEmail =
+      form.email.value.trim();
+
+    const adminPassword =
+      form.password.value;
 
     if (
-      email === "admin@gmail.com" &&
-      password === "admin123"
+      adminEmail === "admin@gmail.com" &&
+      adminPassword === "admin123"
     ) {
       const admin = {
         email: "admin@gmail.com",
         role: "admin"
       };
 
-      sessionStorage.setItem(
-        "loggedInAdmin",
-        JSON.stringify(admin)
-      );
+      loginAdmin(admin);
 
       navigate("/admin-dashboard");
     } else {
-      alert("Invalid admin email or password.");
+      setError(
+        "Invalid admin email or password."
+      );
     }
   }
 
   return (
     <PageShell>
       <main className="auth-page">
-
         <div className="login-card">
-
           <div className="auth-header">
             <h1>Welcome Back</h1>
+
             <p>
               Login to access your Student Course Management
               System.
@@ -74,9 +98,7 @@ function Login() {
           </div>
 
           <div className="login-sections">
-
             <div className="login-section student-login">
-
               <div className="login-icon">
                 Student
               </div>
@@ -88,6 +110,11 @@ function Login() {
               </p>
 
               <form onSubmit={handleStudentLogin}>
+                {error && (
+                  <p className="form-error">
+                    {error}
+                  </p>
+                )}
 
                 <div className="input-group">
                   <label>Email</label>
@@ -96,6 +123,10 @@ function Login() {
                     type="email"
                     name="email"
                     placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) =>
+                      setEmail(e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -107,6 +138,10 @@ function Login() {
                     type="password"
                     name="password"
                     placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) =>
+                      setPassword(e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -114,12 +149,13 @@ function Login() {
                 <button
                   type="submit"
                   className="auth-button"
+                  disabled={loading}
                 >
-                  Login as Student
+                  {loading
+                    ? "Logging in..."
+                    : "Login as Student"}
                 </button>
-
               </form>
-
             </div>
 
             <div className="login-divider">
@@ -127,7 +163,6 @@ function Login() {
             </div>
 
             <div className="login-section admin-login">
-
               <div className="login-icon">
                 Admin
               </div>
@@ -139,7 +174,6 @@ function Login() {
               </p>
 
               <form onSubmit={handleAdminLogin}>
-
                 <div className="input-group">
                   <label>Email</label>
 
@@ -168,37 +202,36 @@ function Login() {
                 >
                   Login as Admin
                 </button>
-
               </form>
-
             </div>
-
           </div>
 
           <div className="auth-links">
-
             <p>
               Don't have an account?
-              <button onClick={() => navigate("/register")}>
+
+              <button
+                onClick={() =>
+                  navigate("/register")
+                }
+              >
                 Register
               </button>
             </p>
 
             <button
-              onClick={() => navigate("/reset-password")}
+              onClick={() =>
+                navigate("/reset-password")
+              }
               className="text-button"
             >
               Forgot Password?
             </button>
-
           </div>
-
         </div>
-
       </main>
     </PageShell>
   );
 }
 
 export default Login;
-

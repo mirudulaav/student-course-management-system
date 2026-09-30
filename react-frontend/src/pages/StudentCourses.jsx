@@ -1,45 +1,31 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import { useCourses } from "../context/CourseContext";
+import { useStudents } from "../context/StudentContext";
 import PageShell from "../components/PageShell";
 
 function StudentCourses() {
   const navigate = useNavigate();
 
-  const student = JSON.parse(
-    sessionStorage.getItem("loggedInStudent") || "null"
-  );
+  const { loggedInStudent } = useAuth();
 
-  const enrollments = JSON.parse(
-    sessionStorage.getItem("enrollments") || "[]"
-  );
+  const {
+    courses,
+    loading: courseLoading
+  } = useCourses();
 
-  const studentCourses = student
-    ? enrollments.filter(
-        (enrollment) =>
-          enrollment.studentEmail === student.email
-      )
-    : [];
+  const {
+    enrollments,
+    loading: enrollmentLoading
+  } = useStudents();
 
-  function viewCourse(enrollment) {
-    const course = {
-      id: enrollment.courseId,
-      title: enrollment.course,
-      level: enrollment.level,
-      duration: enrollment.duration,
-      description:
-        "Continue learning and track your progress in this course."
-    };
-
-    navigate("/enrollment", {
-      state: { course }
-    });
-  }
-
-  if (!student) {
+  if (!loggedInStudent) {
     return (
       <PageShell>
         <main className="container">
           <div className="empty-state">
             <h1>Login Required</h1>
+
             <p>
               Please login as a student to view your courses.
             </p>
@@ -55,6 +41,16 @@ function StudentCourses() {
       </PageShell>
     );
   }
+
+  if (courseLoading || enrollmentLoading) {
+    return <p>Loading courses...</p>;
+  }
+
+  const myEnrollments = enrollments.filter(
+    (item) =>
+      String(item.studentId) ===
+      String(loggedInStudent.id)
+  );
 
   return (
     <PageShell>
@@ -74,12 +70,12 @@ function StudentCourses() {
           </div>
 
           <div className="my-course-count">
-            <strong>{studentCourses.length}</strong>
+            <strong>{myEnrollments.length}</strong>
             <span>Enrolled Courses</span>
           </div>
         </section>
 
-        {studentCourses.length === 0 ? (
+        {myEnrollments.length === 0 ? (
           <section className="student-courses-empty">
             <span className="details-label">
               NO COURSES YET
@@ -102,74 +98,103 @@ function StudentCourses() {
           </section>
         ) : (
           <section className="student-course-grid">
-            {studentCourses.map((enrollment) => (
-              <article
-                className="student-course-card"
-                key={enrollment.id}
-              >
-                <div className="student-course-top">
-                  <span>
-                    COURSE{" "}
-                    {String(enrollment.courseId).padStart(2, "0")}
-                  </span>
+            {myEnrollments.map((enrollment) => {
+              const course = courses.find(
+                (item) =>
+                  String(item.id) ===
+                  String(enrollment.courseId)
+              );
 
-                  <span>
-                    {enrollment.status || "In Progress"}
-                  </span>
-                </div>
-
-                <h2>{enrollment.course}</h2>
-
-                <p>
-                  {enrollment.description ||
-                    "Continue learning and develop your skills through this course."}
-                </p>
-
-                <div className="student-course-info">
-                  <div>
-                    <span>Level</span>
-                    <strong>{enrollment.level}</strong>
-                  </div>
-
-                  <div>
-                    <span>Duration</span>
-                    <strong>{enrollment.duration}</strong>
-                  </div>
-
-                  <div>
-                    <span>Progress</span>
-                    <strong>
-                      {enrollment.progress || 0}%
-                    </strong>
-                  </div>
-                </div>
-
-                <div className="student-progress">
-                  <div className="student-progress-heading">
-                    <span>Learning Progress</span>
-                    <strong>
-                      {enrollment.progress || 0}%
-                    </strong>
-                  </div>
-
-                  <div className="progress-track">
-                    <div
-                      className="progress-fill"
-                      style={{
-                        width: `${enrollment.progress || 0}%`
-                      }}
-                    ></div>
-                  </div>
-                </div>
-
-                <button
-                  className="primary-button student-course-button"
-                  onClick={() => viewCourse(enrollment)}
+              return (
+                <article
+                  className="student-course-card"
+                  key={enrollment.id}
                 >
-                  View Enrollment
-                </button>
-              </article>
-            ))}
+                  <div className="student-course-top">
+                    <span>
+                      COURSE{" "}
+                      {String(
+                        enrollment.courseId
+                      ).padStart(2, "0")}
+                    </span>
+
+                    <span>
+                      {enrollment.status ||
+                        "In Progress"}
+                    </span>
+                  </div>
+
+                  <h2>
+                    {course?.courseName || "Course"}
+                  </h2>
+
+                  <p>
+                    {course?.overview ||
+                      "Continue learning and develop your skills through this course."}
+                  </p>
+
+                  <div className="student-course-info">
+                    <div>
+                      <span>Level</span>
+                      <strong>
+                        {course?.level || "N/A"}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>Duration</span>
+                      <strong>
+                        {course?.duration || "N/A"}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>Progress</span>
+                      <strong>
+                        {enrollment.progress || 0}%
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="student-progress">
+                    <div className="student-progress-heading">
+                      <span>
+                        Learning Progress
+                      </span>
+
+                      <strong>
+                        {enrollment.progress || 0}%
+                      </strong>
+                    </div>
+
+                    <div className="progress-track">
+                      <div
+                        className="progress-fill"
+                        style={{
+                          width: `${
+                            enrollment.progress || 0
+                          }%`
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <button
+                    className="primary-button student-course-button"
+                    onClick={() =>
+                      navigate("/enrollment", {
+                        state: {
+                          course,
+                          enrollment
+                        }
+                      })
+                    }
+                  >
+                    View Enrollment
+                  </button>
+                </article>
+              );
+            })}
           </section>
         )}
       </main>

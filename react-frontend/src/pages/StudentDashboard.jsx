@@ -1,47 +1,39 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import { useStudents } from "../context/StudentContext";
+import { useCourses } from "../context/CourseContext";
 import PageShell from "../components/PageShell";
 
 function StudentDashboard() {
   const navigate = useNavigate();
 
-  const student = JSON.parse(
-    sessionStorage.getItem("loggedInStudent") || "null"
-  );
+  const {
+    loggedInStudent,
+    logoutStudent
+  } = useAuth();
 
-  const enrollments = JSON.parse(
-    sessionStorage.getItem("enrollments") || "[]"
-  );
+  const {
+    students,
+    enrollments,
+    loading: studentLoading,
+    error: studentError
+  } = useStudents();
 
-  const studentCourses = student
-    ? enrollments.filter(
-        (enrollment) =>
-          enrollment.studentEmail === student.email
-      )
-    : [];
+  const {
+    courses,
+    loading: courseLoading,
+    error: courseError
+  } = useCourses();
 
-  const totalCourses = studentCourses.length;
-
-  const completedCourses = studentCourses.filter(
-    (course) => course.status === "Completed"
-  ).length;
-
-  const overallProgress =
-    totalCourses > 0
-      ? Math.round(
-          studentCourses.reduce(
-            (total, course) =>
-              total + Number(course.progress || 0),
-            0
-          ) / totalCourses
-        )
-      : 0;
-
-  function logout() {
-    sessionStorage.removeItem("loggedInStudent");
-    navigate("/login");
+  if (studentLoading || courseLoading) {
+    return <p>Loading dashboard...</p>;
   }
 
-  if (!student) {
+  if (studentError || courseError) {
+    return <p>{studentError || courseError}</p>;
+  }
+
+  if (!loggedInStudent) {
     return (
       <PageShell>
         <main className="container">
@@ -64,6 +56,70 @@ function StudentDashboard() {
     );
   }
 
+  const student = students.find(
+    (item) =>
+      String(item.id) === String(loggedInStudent.id)
+  );
+
+  if (!student) {
+    return (
+      <PageShell>
+        <main className="container">
+          <div className="empty-state">
+            <h1>Student Not Found</h1>
+
+            <p>
+              Your student account could not be found.
+            </p>
+          </div>
+        </main>
+      </PageShell>
+    );
+  }
+
+  const studentEnrollments = enrollments.filter(
+    (item) =>
+      String(item.studentId) === String(student.id)
+  );
+
+  const enrolledCourses = studentEnrollments.map(
+    (enrollment) => {
+      const course = courses.find(
+        (item) =>
+          String(item.id) ===
+          String(enrollment.courseId)
+      );
+
+      return {
+        ...enrollment,
+        course
+      };
+    }
+  );
+
+  const totalCourses = studentEnrollments.length;
+
+  const completedCourses =
+    studentEnrollments.filter(
+      (item) => item.status === "Completed"
+    ).length;
+
+  const overallProgress =
+    totalCourses > 0
+      ? Math.round(
+          studentEnrollments.reduce(
+            (total, item) =>
+              total + Number(item.progress || 0),
+            0
+          ) / totalCourses
+        )
+      : 0;
+
+  function logout() {
+    logoutStudent();
+    navigate("/login");
+  }
+
   return (
     <PageShell>
       <main className="student-dashboard-page">
@@ -74,8 +130,10 @@ function StudentDashboard() {
             </span>
 
             <h1>
-              Welcome, {student.fullname}
+              Welcome, {student.name}
             </h1>
+
+            <p>{student.email}</p>
 
             <p>
               Track your courses, monitor your progress and
@@ -151,13 +209,15 @@ function StudentDashboard() {
 
             <button
               className="text-button"
-              onClick={() => navigate("/student-courses")}
+              onClick={() =>
+                navigate("/student-courses")
+              }
             >
               View All
             </button>
           </div>
 
-          {studentCourses.length === 0 ? (
+          {enrolledCourses.length === 0 ? (
             <div className="dashboard-empty">
               <h3>No Courses Enrolled</h3>
 
@@ -175,21 +235,25 @@ function StudentDashboard() {
             </div>
           ) : (
             <div className="dashboard-course-list">
-              {studentCourses.map((course) => (
+              {enrolledCourses.map((item) => (
                 <article
                   className="dashboard-course-item"
-                  key={course.id}
+                  key={item.id}
                 >
                   <div className="dashboard-course-info">
                     <span>
                       COURSE{" "}
-                      {String(course.courseId).padStart(2, "0")}
+                      {String(item.courseId).padStart(2, "0")}
                     </span>
 
-                    <h3>{course.course}</h3>
+                    <h3>
+                      {item.course?.courseName ||
+                        "Course"}
+                    </h3>
 
                     <p>
-                      {course.level} · {course.duration}
+                      {item.course?.level || "N/A"} ·{" "}
+                      {item.course?.duration || "N/A"}
                     </p>
                   </div>
 
@@ -198,7 +262,7 @@ function StudentDashboard() {
                       <span>Progress</span>
 
                       <strong>
-                        {course.progress || 0}%
+                        {item.progress || 0}%
                       </strong>
                     </div>
 
@@ -206,7 +270,7 @@ function StudentDashboard() {
                       <div
                         className="progress-fill"
                         style={{
-                          width: `${course.progress || 0}%`
+                          width: `${item.progress || 0}%`
                         }}
                       ></div>
                     </div>
@@ -217,14 +281,8 @@ function StudentDashboard() {
                     onClick={() =>
                       navigate("/enrollment", {
                         state: {
-                          course: {
-                            id: course.courseId,
-                            title: course.course,
-                            level: course.level,
-                            duration: course.duration,
-                            description:
-                              "Continue learning and track your progress in this course."
-                          }
+                          course: item.course,
+                          enrollment: item
                         }
                       })
                     }

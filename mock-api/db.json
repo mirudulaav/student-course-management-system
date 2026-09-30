@@ -1,0 +1,226 @@
+{
+  "students": [
+    {
+      "id": "1",
+      "name": "Mirudula",
+      "email": "mirudula@example.com",
+      "password": "student123",
+      "phone": "",
+      "dob": "",
+      "gender": "",
+      "department": "Computer Science",
+      "year": "Final Year",
+      "status": "Active"
+    }
+  ],
+  "courses": [
+    {
+        "id": "1",
+        "courseName": "Python Programming",
+        "courseCode": "CS101",
+        "instructor": "Dr. Anu",
+        "duration": "8 Weeks",
+        "level": "Beginner",
+        "category": "Programming",
+        "image": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn Python programming from beginner to advanced level."
+        },
+        {
+        "id": "2",
+        "courseName": "Web Development",
+        "courseCode": "WD101",
+        "instructor": "Dr. Priya",
+        "duration": "10 Weeks",
+        "level": "Intermediate",
+        "category": "Web Development",
+        "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn HTML, CSS and JavaScript for modern web development."
+        },
+        {
+        "id": "3",
+        "courseName": "Artificial Intelligence",
+        "courseCode": "AI101",
+        "instructor": "Dr. Priya",
+        "duration": "12 Weeks",
+        "level": "Advanced",
+        "category": "Artificial Intelligence",
+        "image": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn the fundamentals of Artificial Intelligence."
+        },
+        {
+        "id": "4",
+        "courseName": "Machine Learning",
+        "courseCode": "ML101",
+        "instructor": "Dr. Arun",
+        "duration": "12 Weeks",
+        "level": "Intermediate",
+        "category": "Machine Learning",
+        "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn machine learning algorithms, model training and prediction."
+        },
+        {
+        "id": "5",
+        "courseName": "Deep Learning",
+        "courseCode": "DL101",
+        "instructor": "Dr. Karthik",
+        "duration": "12 Weeks",
+        "level": "Advanced",
+        "category": "Deep Learning",
+        "image": "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn neural networks, CNNs, RNNs and deep learning techniques."
+        },
+        {
+        "id": "6",
+        "courseName": "Large Language Models",
+        "courseCode": "LLM101",
+        "instructor": "Dr. Meena",
+        "duration": "8 Weeks",
+        "level": "Advanced",
+        "category": "Generative AI",
+        "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Understand large language models, transformers and modern AI systems."
+        },
+        {
+        "id": "7",
+        "courseName": "Natural Language Processing",
+        "courseCode": "NLP101",
+        "instructor": "Dr. Meena",
+        "duration": "10 Weeks",
+        "level": "Advanced",
+        "category": "NLP",
+        "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn text processing, sentiment analysis, classification and NLP."
+        },
+        {
+        "id": "8",
+        "courseName": "Computer Vision",
+        "courseCode": "CV101",
+        "instructor": "Dr. Rahul",
+        "duration": "10 Weeks",
+        "level": "Advanced",
+        "category": "Computer Vision",
+        "image": "https://images.unsplash.com/photo-1535378917042-10a22c95931a?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn image processing, object detection and computer vision."
+        },
+        {
+        "id": "9",
+        "courseName": "Generative AI",
+        "courseCode": "GEN101",
+        "instructor": "Dr. Meena",
+        "duration": "8 Weeks",
+        "level": "Advanced",
+        "category": "Generative AI",
+        "image": "https://images.unsplash.com/photo-1676299081847-824916de030a?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Explore generative AI, AI content generation and modern AI applications."
+        },
+        {
+        "id": "10",
+        "courseName": "Data Science",
+        "courseCode": "DS101",
+        "instructor": "Dr. Arun",
+        "duration": "12 Weeks",
+        "level": "Intermediate",
+        "category": "Data Science",
+        "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn data analysis, visualization, statistics and predictive modeling."
+        },
+        {
+        "id": "11",
+        "courseName": "Cloud Computing",
+        "courseCode": "CC101",
+        "instructor": "Dr. Vivek",
+        "duration": "10 Weeks",
+        "level": "Intermediate",
+        "category": "Cloud",
+        "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn cloud platforms, cloud architecture and deployment concepts."
+        },
+        {
+        "id": "12",
+        "courseName": "Cyber Security",
+        "courseCode": "CY101",
+        "instructor": "Dr. Naveen",
+        "duration": "10 Weeks",
+        "level": "Intermediate",
+        "category": "Cyber Security",
+        "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn cybersecurity fundamentals, threats, protection and security practices."
+        },
+        {
+        "id": "13",
+        "courseName": "Blockchain",
+        "courseCode": "BC101",
+        "instructor": "Dr. Vivek",
+        "duration": "8 Weeks",
+        "level": "Intermediate",
+        "category": "Blockchain",
+        "image": "https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn blockchain architecture, distributed ledgers and smart contracts."
+        },
+        {
+        "id": "14",
+        "courseName": "Internet of Things",
+        "courseCode": "IOT101",
+        "instructor": "Dr. Rahul",
+        "duration": "10 Weeks",
+        "level": "Intermediate",
+        "category": "IoT",
+        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn connected devices, sensors, IoT architecture and applications."
+        },
+        {
+        "id": "15",
+        "courseName": "Big Data",
+        "courseCode": "BD101",
+        "instructor": "Dr. Arun",
+        "duration": "10 Weeks",
+        "level": "Advanced",
+        "category": "Big Data",
+        "image": "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn big data concepts, distributed processing and large-scale analytics."
+        },
+        {
+        "id": "16",
+        "courseName": "DevOps",
+        "courseCode": "DO101",
+        "instructor": "Dr. Karthik",
+        "duration": "8 Weeks",
+        "level": "Intermediate",
+        "category": "DevOps",
+        "image": "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=900&q=80",
+        "status": "Active",
+        "overview": "Learn CI/CD, automation, deployment and DevOps practices."
+        }
+  ],
+  "enrollments": [
+    {
+      "id": "1",
+      "studentId": "1",
+      "courseId": "1",
+      "status": "Enrolled",
+      "progress": 65
+    },
+    {
+      "id": "2",
+      "studentId": "1",
+      "courseId": "3",
+      "status": "In Progress",
+      "progress": 35
+    }
+  ]
+}

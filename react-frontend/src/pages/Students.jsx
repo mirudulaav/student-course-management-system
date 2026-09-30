@@ -1,16 +1,26 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import { useStudents } from "../context/StudentContext";
 import PageShell from "../components/PageShell";
 
 function Students() {
   const navigate = useNavigate();
 
-  const students = JSON.parse(
-    sessionStorage.getItem("students") || "[]"
-  );
+  const { loggedInAdmin } = useAuth();
 
-  const loggedInAdmin = JSON.parse(
-    sessionStorage.getItem("loggedInAdmin") || "null"
-  );
+  const {
+    students,
+    loading,
+    error
+  } = useStudents();
+
+  if (loading) {
+    return <p>Loading students...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   if (!loggedInAdmin) {
     return (
@@ -18,9 +28,11 @@ function Students() {
         <main className="container">
           <div className="empty-state">
             <h1>Admin Login Required</h1>
+
             <p>
               Please login as an administrator to manage students.
             </p>
+
             <button
               className="primary-button"
               onClick={() => navigate("/login")}
@@ -52,6 +64,7 @@ function Students() {
 
           <div className="student-count">
             <strong>{students.length}</strong>
+
             <span>Total Students</span>
           </div>
         </section>
@@ -60,6 +73,7 @@ function Students() {
           <div className="students-table-header">
             <div>
               <h2>Student Records</h2>
+
               <p>
                 All registered student accounts are listed below.
               </p>
@@ -67,7 +81,9 @@ function Students() {
 
             <button
               className="secondary-button"
-              onClick={() => navigate("/admin-dashboard")}
+              onClick={() =>
+                navigate("/admin-dashboard")
+              }
             >
               ← Dashboard
             </button>
@@ -76,6 +92,7 @@ function Students() {
           {students.length === 0 ? (
             <div className="students-empty">
               <h3>No Students Registered</h3>
+
               <p>
                 Student records will appear here after students
                 create an account.
@@ -92,44 +109,66 @@ function Students() {
                     <th>Phone</th>
                     <th>Date of Birth</th>
                     <th>Gender</th>
-                    <th>Course</th>
+                    <th>Department</th>
+                    <th>Year</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {students.map((student, index) => (
-                    <tr key={student.email || index}>
-                      <td>
-                        {String(index + 1).padStart(2, "0")}
-                      </td>
+                  {students.map(
+                    (student, index) => (
+                      <tr
+                        key={
+                          student.id ||
+                          student.email ||
+                          index
+                        }
+                      >
+                        <td>
+                          {String(
+                            index + 1
+                          ).padStart(2, "0")}
+                        </td>
 
-                      <td>
-                        <strong>
-                          {student.fullname || "Not Available"}
-                        </strong>
-                      </td>
+                        <td>
+                          <strong>
+                            {student.name ||
+                              "Not Available"}
+                          </strong>
+                        </td>
 
-                      <td>
-                        {student.email || "Not Available"}
-                      </td>
+                        <td>
+                          {student.email ||
+                            "Not Available"}
+                        </td>
 
-                      <td>
-                        {student.phone || "Not Available"}
-                      </td>
+                        <td>
+                          {student.phone ||
+                            "Not Available"}
+                        </td>
 
-                      <td>
-                        {student.dob || "Not Available"}
-                      </td>
+                        <td>
+                          {student.dob ||
+                            "Not Available"}
+                        </td>
 
-                      <td>
-                        {student.gender || "Not Available"}
-                      </td>
+                        <td>
+                          {student.gender ||
+                            "Not Available"}
+                        </td>
 
-                      <td>
-                        {student.course || "Not Available"}
-                      </td>
-                    </tr>
-                  ))}
+                        <td>
+                          {student.department ||
+                            "Not Available"}
+                        </td>
+
+                        <td>
+                          {student.year ||
+                            "Not Available"}
+                        </td>
+                      </tr>
+                    )
+                  )}
                 </tbody>
               </table>
             </div>

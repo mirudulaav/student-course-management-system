@@ -1,38 +1,21 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import { useCourses } from "../context/CourseContext";
+import { useStudents } from "../context/StudentContext";
 import PageShell from "../components/PageShell";
 
 function AdminDashboard() {
   const navigate = useNavigate();
 
-  const admin = JSON.parse(
-    sessionStorage.getItem("loggedInAdmin") || "null"
-  );
+  const { loggedInAdmin, logoutAdmin } = useAuth();
+  const { courses, loading: courseLoading } = useCourses();
+  const { students, enrollments, loading: studentLoading } = useStudents();
 
-  const students = JSON.parse(
-    sessionStorage.getItem("students") || "[]"
-  );
+  const admin = loggedInAdmin;
 
-  const enrollments = JSON.parse(
-    sessionStorage.getItem("enrollments") || "[]"
-  );
-
-  const courses = [
-    "Machine Learning",
-    "Deep Learning",
-    "Large Language Models",
-    "Natural Language Processing",
-    "Computer Vision",
-    "Generative AI",
-    "Python Programming",
-    "Data Science",
-    "Cloud Computing",
-    "Cyber Security",
-    "Blockchain",
-    "Internet of Things",
-    "Big Data",
-    "DevOps",
-    "Data Structures & Algorithms"
-  ];
+  const totalCourses = courses.length;
+  const totalStudents = students.length;
+  const totalEnrollments = enrollments.length;
 
   const completedEnrollments = enrollments.filter(
     (enrollment) => enrollment.status === "Completed"
@@ -43,8 +26,12 @@ function AdminDashboard() {
   ).length;
 
   function logout() {
-    sessionStorage.removeItem("loggedInAdmin");
+    logoutAdmin();
     navigate("/login");
+  }
+
+  if (courseLoading || studentLoading) {
+    return <p>Loading dashboard...</p>;
   }
 
   if (!admin) {
@@ -97,19 +84,19 @@ function AdminDashboard() {
         <section className="admin-stats">
           <div className="admin-stat-card">
             <span>TOTAL STUDENTS</span>
-            <strong>{students.length}</strong>
+            <strong>{totalStudents}</strong>
             <p>Registered students</p>
           </div>
 
           <div className="admin-stat-card">
             <span>TOTAL COURSES</span>
-            <strong>{courses.length}</strong>
+            <strong>{totalCourses}</strong>
             <p>Available courses</p>
           </div>
 
           <div className="admin-stat-card">
             <span>TOTAL ENROLLMENTS</span>
-            <strong>{enrollments.length}</strong>
+            <strong>{totalEnrollments}</strong>
             <p>Course enrollments</p>
           </div>
 
@@ -190,7 +177,7 @@ function AdminDashboard() {
           <div className="admin-overview-content">
             <div className="overview-item">
               <span>Total Enrollments</span>
-              <strong>{enrollments.length}</strong>
+              <strong>{totalEnrollments}</strong>
             </div>
 
             <div className="overview-item">
