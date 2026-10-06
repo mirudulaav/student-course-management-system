@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Course Management | Student Course Management System</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<nav>
+<div class="logo">SCMS</div>
+<ul>
+<li><a href="admin-dashboard.html">Dashboard</a></li>
+<li><a href="courses.html">Courses</a></li>
+<li><a href="students.html">Students</a></li>
+<li><a href="index.html">Logout</a></li>
+</ul>
+</nav>
+
+<div class="header">
+<h1>Course Management</h1>
+<button id="addCourse" class="add-btn">+ Add Course</button>
+</div>
+
+<div class="search">
+<input type="text" id="search" placeholder="Search Courses">
+</div>
+
+
+<div class="course-container">
+<div class="card">
+	<h2>Machine Learning</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 12 Weeks</p>
+	<p><strong>Level :</strong> Beginner</p>
+	<p><strong>Faculty :</strong> AI Department</p>
+	<p><strong>Seats :</strong> 120</p>
+	</div>
+	<p class="description">
+	Build predictive models using supervised and unsupervised learning algorithms, regression, classification and clustering.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Machine%20Learning" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+	<h2>Deep Learning</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 14 Weeks</p>
+	<p><strong>Level :</strong> Intermediate</p>
+	<p><strong>Faculty :</strong> AI Department</p>
+	<p><strong>Seats :</strong> 100</p>
+	</div>
+	<p class="description">
+	Learn neural networks, CNNs, RNNs and deep learning models using TensorFlow and Keras.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Deep%20Learning" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+	<h2>Large Language Models</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 10 Weeks</p>
+	<p><strong>Level :</strong> Advanced</p>
+	<p><strong>Faculty :</strong> AI Department</p>
+	<p><strong>Seats :</strong> 80</p>
+	</div>
+	<p class="description">
+	Understand Transformers, GPT models, Prompt Engineering, Fine-tuning and AI Agents.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Large%20Language%20Models" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+	<h2>Natural Language Processing</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 10 Weeks</p>
+	<p><strong>Level :</strong> Intermediate</p>
+	<p><strong>Faculty :</strong> AI Department</p>
+	<p><strong>Seats :</strong> 90</p>
+	</div>
+	<p class="description">
+	Learn text preprocessing, tokenization, sentiment analysis and language modeling.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Natural%20Language%20Processing" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+	<h2>Computer Vision</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 11 Weeks</p>
+	<p><strong>Level :</strong> Intermediate</p>
+	<p><strong>Faculty :</strong> AI Department</p>
+	<p><strong>Seats :</strong> 70</p>
+	</div>
+	<p class="description">
+	Develop image recognition systems using OpenCV, CNNs and object detection algorithms.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Computer%20Vision" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+	<h2>Generative AI</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 8 Weeks</p>
+	<p><strong>Level :</strong> Advanced</p>
+	<p><strong>Faculty :</strong> AI Department</p>
+	<p><strong>Seats :</strong> 60</p>
+	</div>
+	<p class="description">
+	Create AI-powered applications using LLMs, diffusion models and prompt engineering.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Generative%20AI" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+	<h2>Python Programming</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 8 Weeks</p>
+	<p><strong>Level :</strong> Beginner</p>
+	<p><strong>Faculty :</strong> Programming Department</p>
+	<p><strong>Seats :</strong> 150</p>
+	</div>
+	<p class="description">
+	Master Python fundamentals, OOP, file handling and automation projects.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Python%20Programming" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+	<h2>Data Science</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 12 Weeks</p>
+	<p><strong>Level :</strong> Intermediate</p>
+	<p><strong>Faculty :</strong> Data Science Department</p>
+	<p><strong>Seats :</strong> 90</p>
+	</div>
+	<p class="description">
+	Analyze data using Python, Pandas, NumPy, visualization and machine learning.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Data%20Science" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+	<h2>Cloud Computing</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 10 Weeks</p>
+	<p><strong>Level :</strong> Intermediate</p>
+	<p><strong>Faculty :</strong> Cloud Department</p>
+	<p><strong>Seats :</strong> 100</p>
+	</div>
+	<p class="description">
+	Learn cloud deployment, virtualization, AWS basics and cloud architecture.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Cloud%20Computing" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+	<h2>Cyber Security</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 10 Weeks</p>
+	<p><strong>Level :</strong> Intermediate</p>
+	<p><strong>Faculty :</strong> Security Department</p>
+	<p><strong>Seats :</strong> 90</p>
+	</div>
+	<p class="description">
+	Study ethical hacking, network security, cryptography and cyber defense.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Cyber%20Security" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+	<h2>Blockchain</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 9 Weeks</p>
+	<p><strong>Level :</strong> Intermediate</p>
+	<p><strong>Faculty :</strong> Blockchain Department</p>
+	<p><strong>Seats :</strong> 60</p>
+	</div>
+	<p class="description">
+	Explore distributed ledger technology, cryptocurrencies and smart contracts.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Blockchain" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+<h2>Internet of Things</h2>
+
+<div class="details">
+	<p><strong>Duration :</strong> 10 Weeks</p>
+	<p><strong>Level :</strong> Intermediate</p>
+	<p><strong>Faculty :</strong> IoT Department</p>
+	<p><strong>Seats :</strong> 70</p>
+	</div>
+	<p class="description">
+	Build smart systems using sensors, Arduino, Raspberry Pi and cloud connectivity.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Internet%20of%20Things" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+<h2>Big Data Analytics</h2>
+
+<div class="details">
+	<p><strong>Duration :</strong> 12 Weeks</p>
+	<p><strong>Level :</strong> Advanced</p>
+	<p><strong>Faculty :</strong> Data Engineering Department</p>
+	<p><strong>Seats :</strong> 75</p>
+	</div>
+	<p class="description">
+	Analyze massive datasets using Hadoop, Spark and distributed computing tools.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Big%20Data%20Analytics" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+<h2>DevOps</h2>
+
+<div class="details">
+	<p><strong>Duration :</strong> 10 Weeks</p>
+	<p><strong>Level :</strong> Intermediate</p>
+	<p><strong>Faculty :</strong> DevOps Department</p>
+	<p><strong>Seats :</strong> 85</p>
+	</div>
+	<p class="description">
+	Learn Docker, Kubernetes, CI/CD pipelines and deployment automation.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=DevOps" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+
+<div class="card">
+	<h2>Data Structures &amp; Algorithms</h2>
+	<div class="details">
+	<p><strong>Duration :</strong> 12 Weeks</p>
+	<p><strong>Level :</strong> Beginner</p>
+	<p><strong>Faculty :</strong> Computer Science Department</p>
+	<p><strong>Seats :</strong> 150</p>
+	</div>
+	<p class="description">
+	Learn arrays, linked lists, trees, graphs, sorting and problem-solving techniques.
+	</p>
+	<div class="buttons">
+	<a href="course-details.html?course=Data%20Structures%20%26%20Algorithms" class="btn primary">View Details</a>
+	<button class="btn edit">Edit</button>
+	<button class="btn delete">Delete</button>
+	</div>
+</div>
+</div>
+
+<div class="modal" id="courseModal">
+<div class="modal-content">
+<h2 id="modalTitle">Add Course</h2>
+<input type="text" id="courseName" placeholder="Course Name">
+<textarea id="courseDescription" rows="5" placeholder="Course Description"></textarea>
+<div class="modal-buttons">
+<button id="saveCourse">Save</button>
+<button id="closeModal">Close</button>
+</div>
+</div>
+</div>
+<footer>
+© 2026 Student Course Management System | Course Management
+</footer>
+<script src="script.js"></script>
+</body>
+</html>

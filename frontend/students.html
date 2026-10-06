@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Students | Student Course Management System</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-requires-auth="admin">
+<nav>
+<div class="logo">SCMS Admin</div>
+<ul>
+<li><a href="admin-dashboard.html">Dashboard</a></li>
+<li><a href="students.html" class="active">Students</a></li>
+<li><a href="courses.html">Courses</a></li>
+<li><a href="enrollment.html">Enrollment</a></li>
+<li><a href="reports.html">Reports</a></li>
+<li><a href="index.html">Logout</a></li>
+</ul>
+</nav>
+
+<div class="header">
+<h1>Students</h1>
+<p>View, add, edit and manage every registered student record.</p>
+</div>
+
+<div class="admin-toolbar">
+<div class="search">
+<input type="text" id="studentSearch" placeholder="Search by student name">
+</div>
+<span class="record-count" id="studentCount">0 students</span>
+<button id="addStudent" class="add-btn">+ Add Student</button>
+</div>
+
+<div class="table-wrapper" id="studentTableWrapper">
+<table class="admin-table">
+<thead>
+<tr>
+<th>#</th>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Course</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="studentTableBody"></tbody>
+</table>
+</div>
+
+<div class="modal" id="studentModal">
+<div class="modal-content">
+<h2 id="studentModalTitle">Add Student</h2>
+<input type="text" id="studentNameInput" placeholder="Student Name">
+<input type="email" id="studentEmailInput" placeholder="Email Address">
+<input type="tel" id="studentPhoneInput" placeholder="Phone Number">
+<select id="studentCourseInput">
+<option value="">Select Course</option>
+<option>Machine Learning</option>
+<option>Deep Learning</option>
+<option>Large Language Models</option>
+<option>Natural Language Processing</option>
+<option>Computer Vision</option>
+<option>Generative AI</option>
+<option>Python Programming</option>
+<option>Data Science</option>
+<option>Cloud Computing</option>
+<option>Cyber Security</option>
+<option>Blockchain</option>
+<option>Internet of Things</option>
+<option>Big Data Analytics</option>
+<option>DevOps</option>
+<option>Data Structures &amp; Algorithms</option>
+</select>
+<div class="modal-buttons">
+<button id="saveStudent">Save</button>
+<button id="closeStudentModal">Close</button>
+</div>
+</div>
+</div>
+
+<footer>
+© 2026 Student Course Management System | Students
+</footer>
+<script src="state.js"></script>
+<script src="validation.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enrollment Details | Student Course Management System</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body data-requires-auth="admin">
+<nav>
+<div class="logo">SCMS Admin</div>
+<ul>
+<li><a href="admin-dashboard.html">Dashboard</a></li>
+<li><a href="students.html">Students</a></li>
+<li><a href="courses.html">Courses</a></li>
+<li><a href="enrollment.html">Enrollment</a></li>
+<li><a href="reports.html">Reports</a></li>
+<li><a href="index.html">Logout</a></li>
+</ul>
+</nav>
+
+<div class="header">
+<h1>Enrollment Details</h1>
+<p>Course registrations submitted through the Enroll Now form.</p>
+</div>
+
+<div class="admin-toolbar">
+<div class="search">
+<input type="text" id="enrollmentSearch" placeholder="Search by student name or course">
+</div>
+<span class="record-count" id="enrollmentCount">0 enrollments</span>
+</div>
+
+<p id="noEnrollments" class="empty-state" style="display:none;">
+No enrollments yet. Submissions from the Enroll Now form will appear here.
+</p>
+
+<div class="table-wrapper" id="enrollmentTableWrapper">
+<table class="admin-table">
+<thead>
+<tr>
+<th>Student</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Course</th>
+<th>Date</th>
+<th>Notes</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="enrollmentTableBody"></tbody>
+</table>
+</div>
+
+<footer>
+© 2026 Student Course Management System | Enrollment Details
+</footer>
+<script src="state.js"></script>
+<script src="validation.js"></script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | SCMS</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<nav>
+<div class="logo">SCMS</div>
+
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="register.html">Register</a></li>
+<li><a href="login.html">Login</a></li>
+</ul>
+</nav>
+
+<div class="container">
+
+<div class="login-box">
+
+<div class="left">
+
+<h1>Welcome Back</h1>
+
+<p>
+Login to your account to access your courses, academic
+dashboard and learning progress, or switch to the
+administrator portal to manage the system.
+</p>
+
+<div class="feature">Secure Account Access</div>
+<div class="feature">Personalized Dashboard</div>
+<div class="feature">Course &amp; Enrollment Management</div>
+<div class="feature">Academic Reports &amp; Records</div>
+
+</div>
+
+<div class="right">
+
+<h2>Login</h2>
+
+<p>Select your portal and enter your credentials.</p>
+
+<input type="radio" name="loginTab" id="tab-student" checked>
+<input type="radio" name="loginTab" id="tab-admin">
+
+<div class="login-tabs">
+<label for="tab-student">Student Portal</label>
+<label for="tab-admin">Administrator</label>
+</div>
+
+<div class="panels">
+
+<div class="login-panel" id="panel-student">
+
+<form id="studentLoginForm">
+
+<div class="input-group">
+<label>Email Address</label>
+<input type="email" id="studentEmail" placeholder="Enter your registered email" required>
+</div>
+
+<div class="input-group">
+<label>Password</label>
+<input type="password" id="studentPassword" placeholder="Enter your password" required>
+</div>
+
+<p class="error" id="studentError"></p>
+
+<div class="forgot">
+<a href="reset-password.html">Forgot Password?</a>
+</div>
+
+<button type="submit" class="btn">Login as Student</button>
+
+<div class="register">
+Don't have an account?
+<a href="register.html">Register Here</a>
+</div>
+
+</form>
+
+</div>
+
+<div class="login-panel" id="panel-admin">
+
+<form id="adminLoginForm">
+
+<div class="input-group">
+<label>Admin Email</label>
+<input type="email" id="adminEmail" placeholder="Enter your admin email" required>
+</div>
+
+<div class="input-group">
+<label>Password</label>
+<input type="password" id="adminPassword" placeholder="Enter your password" required>
+</div>
+
+<p class="error" id="adminError"></p>
+
+<div class="forgot">
+<a href="reset-password.html">Forgot Password?</a>
+</div>
+
+<button type="submit" class="btn">Login as Admin</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+© 2026 Student Course Management System | Login
+</footer>
+
+<script src="state.js"></script>
+<script src="validation.js"></script>
+</body>
+</html>
