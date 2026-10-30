@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api";
+import { loginStudent as authenticateStudent } from "../api/authApi";
 import { useAuth } from "../auth/AuthContext";
 import PageShell from "../components/PageShell";
 
@@ -24,30 +24,29 @@ function Login() {
       setLoading(true);
       setError("");
 
-      const response = await api.get(
-        `/students?email=${encodeURIComponent(email)}`
-      );
+      const result = await authenticateStudent({
+        email: email.trim(),
+        password
+      });
 
-      const student = response.data[0];
-
-      if (
-        !student ||
-        student.password !== password
-      ) {
-        setError(
-          "Invalid email or password."
-        );
-        return;
+      if (!result?.token || !result?.student) {
+        throw new Error("Login response did not include a token and student.");
       }
 
-      loginStudent(student);
+      sessionStorage.setItem("token", result.token);
+      sessionStorage.setItem(
+        "loggedInStudent",
+        JSON.stringify(result.student)
+      );
+      loginStudent(result.student);
 
       navigate("/student-dashboard");
     } catch (error) {
       console.error(error);
 
       setError(
-        "Unable to connect to the server."
+        error.response?.data?.message ||
+        "Unable to log in. Please check your credentials and try again."
       );
     } finally {
       setLoading(false);

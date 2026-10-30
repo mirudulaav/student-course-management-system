@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import api from "../services/api";
 import PageShell from "../components/PageShell";
+import { registerStudent } from "../api/authApi";
 
 function Register() {
   const navigate = useNavigate();
@@ -16,17 +16,11 @@ function Register() {
 
     const name = form.fullname.value.trim();
     const email = form.email.value.trim();
-    const phone = form.phone.value.trim();
-    const dob = form.dob.value;
-    const gender = form.gender.value;
     const password = form.password.value;
-    const confirmPassword =
-      form.confirmPassword.value;
+    const confirmPassword = form.confirmPassword.value;
 
     if (password.length < 8) {
-      setError(
-        "Password must contain at least 8 characters."
-      );
+      setError("Password must contain at least 8 characters.");
       return;
     }
 
@@ -39,41 +33,23 @@ function Register() {
       setLoading(true);
       setError("");
 
-      const existing = await api.get(
-        `/students?email=${encodeURIComponent(email)}`
-      );
-
-      if (existing.data.length > 0) {
-        setError(
-          "An account with this email already exists."
-        );
-        return;
-      }
-
-      const student = {
+      // Calls the new backend authentication API endpoint
+      const result = await registerStudent({
         name,
         email,
-        phone,
-        dob,
-        gender,
         password,
-        department: "Computer Science",
-        year: "Final Year",
-        status: "Active"
-      };
+        department: "Computer Science" // Required by backend validation
+      });
 
-      await api.post("/students", student);
-
-      alert(
-        "Registration successful. Please login."
-      );
+      alert(result.message || "Registration successful. Please login.");
 
       navigate("/login");
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
 
+      // Extracts the error message sent from your backend controller/validation middleware
       setError(
-        "Unable to register. Please make sure JSON Server is running."
+        err.response?.data?.message || "Unable to register. Please make sure the backend server is running."
       );
     } finally {
       setLoading(false);
@@ -97,7 +73,7 @@ function Register() {
           </div>
 
           {error && (
-            <p className="form-error">
+            <p className="form-error" style={{ color: "red", marginBottom: "1rem" }}>
               {error}
             </p>
           )}
@@ -231,16 +207,18 @@ function Register() {
 
           <div className="auth-links">
             <p>
-              Already have an account?
-
+              Already have an account?{" "}
               <button
+                type="button"
                 onClick={() => navigate("/login")}
+                style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", textDecoration: "underline", padding: 0 }}
               >
                 Login
               </button>
             </p>
 
             <button
+              type="button"
               className="text-button"
               onClick={() => navigate("/")}
             >

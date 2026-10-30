@@ -1,45 +1,77 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState
 } from "react";
 import api from "../services/api";
+import { useAuth } from "../auth/AuthContext";
 
 const StudentContext = createContext(null);
 
+function getRecords(response, resource) {
+  const records = Array.isArray(response.data)
+    ? response.data
+    : response.data?.data;
+
+  if (!Array.isArray(records)) {
+    throw new Error(`Expected ${resource} response to be an array.`);
+  }
+
+  return records;
+}
+
 export function StudentProvider({ children }) {
+  const { loggedInStudent } = useAuth();
   const [students, setStudents] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  async function fetchStudents() {
+  const fetchStudents = useCallback(async () => {
     const response = await api.get("/students");
-    setStudents(response.data);
-  }
+    setStudents(getRecords(response, "students"));
+  }, []);
 
-  async function fetchEnrollments() {
+  const fetchEnrollments = useCallback(async () => {
     const response = await api.get("/enrollments");
-    setEnrollments(response.data);
-  }
+    setEnrollments(getRecords(response, "enrollments"));
+  }, []);
 
-  async function fetchData() {
-    try {
-      setLoading(true);
+  const fetchData = useCallback(async () => {
+    if (!sessionStorage.getItem("token")) {
+      setStudents([]);
+      setEnrollments([]);
+      setLoading(false);
       setError("");
+      return;
+    }
 
-      await Promise.all([
+    setLoading(true);
+    setError("");
+
+    try {
+      const [studentsResult, enrollmentsResult] = await Promise.allSettled([
         fetchStudents(),
         fetchEnrollments()
       ]);
-    } catch (error) {
-      console.error(error);
-      setError("Unable to load student data.");
+
+      if (studentsResult.status === "rejected") {
+        console.error("Failed to load students:", studentsResult.reason);
+        setError("Unable to load student data.");
+      }
+
+      if (enrollmentsResult.status === "rejected") {
+        console.warn(
+          "Optional enrollment data not loaded:",
+          enrollmentsResult.reason?.message
+        );
+      }
     } finally {
       setLoading(false);
     }
-  }
+  }, [fetchEnrollments, fetchStudents]);
 
   async function enroll(studentId, courseId) {
     const existingEnrollment = enrollments.find(
@@ -74,7 +106,7 @@ export function StudentProvider({ children }) {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData, loggedInStudent]);
 
   return (
     <StudentContext.Provider

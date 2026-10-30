@@ -1,14 +1,18 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 function Navbar() {
   const navigate = useNavigate();
-
-  const student = sessionStorage.getItem("loggedInStudent");
-  const admin = sessionStorage.getItem("loggedInAdmin");
+  const {
+    loggedInStudent,
+    loggedInAdmin,
+    logoutStudent,
+    logoutAdmin
+  } = useAuth();
 
   function logout() {
-    sessionStorage.removeItem("loggedInStudent");
-    sessionStorage.removeItem("loggedInAdmin");
+    if (loggedInStudent) logoutStudent();
+    if (loggedInAdmin) logoutAdmin();
     navigate("/login");
   }
 
@@ -31,7 +35,7 @@ function Navbar() {
           </NavLink>
         </li>
 
-        {!student && !admin && (
+        {!loggedInStudent && !loggedInAdmin && (
           <>
             <li>
               <NavLink to="/login">
@@ -47,7 +51,7 @@ function Navbar() {
           </>
         )}
 
-        {student && (
+        {loggedInStudent && (
           <>
             <li>
               <NavLink to="/student-dashboard">
@@ -78,7 +82,7 @@ function Navbar() {
           </>
         )}
 
-        {admin && (
+        {loggedInAdmin && (
           <>
             <li>
               <NavLink to="/admin-dashboard">
@@ -115,7 +119,7 @@ function Navbar() {
           </>
         )}
 
-        {!student && !admin && (
+        {!loggedInStudent && !loggedInAdmin && (
           <li>
             <NavLink to="/reset-password">
               Reset Password

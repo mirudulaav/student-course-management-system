@@ -28,6 +28,7 @@ function AdminDashboard() {
   function logout() {
     logoutAdmin();
     navigate("/login");
+    sessionStorage.removeItem("token");
   }
 
   if (courseLoading || studentLoading) {

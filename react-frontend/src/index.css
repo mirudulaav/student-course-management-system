@@ -3160,3 +3160,4 @@ table tr:hover td {
     grid-template-columns: 1fr !important;
   }
 }
+.form-error { color: #d93025; margin-bottom: 1rem; font-weight: 500; }

@@ -1,42 +1,62 @@
-const validateCourse = (req, res, next) => {
-    const { courseName, courseCode, instructor, duration, category } = req.body;
+const requiredFields = [
+    "courseName",
+    "courseCode",
+    "instructor",
+    "duration",
+    "category"
+];
+const allowedFields = new Set([
+    ...requiredFields,
+    "level",
+    "image",
+    "status",
+    "overview"
+]);
 
-    if (!courseName) {
+function isValidCourseField(field, value) {
+    if (!allowedFields.has(field)) return false;
+    if (field === "duration" && Number.isFinite(value)) return value > 0;
+    return typeof value === "string" && value.trim().length > 0;
+}
+
+function validateCourse(req, res, next) {
+    const course = req.body;
+
+    if (
+        !course ||
+        typeof course !== "object" ||
+        Array.isArray(course) ||
+        [...requiredFields].some(
+            field => !isValidCourseField(field, course[field])
+        ) ||
+        Object.keys(course).some(field => !isValidCourseField(field, course[field]))
+    ) {
         return res.status(400).json({
             success: false,
-            message: "Course name is required"
-        });
-    }
-
-    if (!courseCode) {
-        return res.status(400).json({
-            success: false,
-            message: "Course code is required"
-        });
-    }
-
-    if (!instructor) {
-        return res.status(400).json({
-            success: false,
-            message: "Instructor is required"
-        });
-    }
-
-    if (!duration) {
-        return res.status(400).json({
-            success: false,
-            message: "Duration is required"
-        });
-    }
-
-    if (!category) {
-        return res.status(400).json({
-            success: false,
-            message: "Category is required"
+            message: "Provide valid course name, code, instructor, duration, and category"
         });
     }
 
     next();
-};
+}
 
-module.exports = validateCourse;
+function validateCoursePatch(req, res, next) {
+    const course = req.body;
+    const fields = course && typeof course === "object" && !Array.isArray(course)
+        ? Object.keys(course)
+        : [];
+
+    if (
+        fields.length === 0 ||
+        fields.some(field => !isValidCourseField(field, course[field]))
+    ) {
+        return res.status(400).json({
+            success: false,
+            message: "Provide one or more valid course fields to update"
+        });
+    }
+
+    next();
+}
+
+module.exports = { validateCourse, validateCoursePatch };

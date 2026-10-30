@@ -118,6 +118,7 @@ function StudentDashboard() {
   function logout() {
     logoutStudent();
     navigate("/login");
+    sessionStorage.removeItem("token");
   }
 
   return (

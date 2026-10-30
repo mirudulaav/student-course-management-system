@@ -24,11 +24,15 @@ export const AuthProvider = ({ children }) => {
   const logoutStudent = () => {
     setLoggedInStudent(null);
     localStorage.removeItem("loggedInStudent");
+    sessionStorage.removeItem("loggedInStudent");
+    sessionStorage.removeItem("token");
   };
 
   const logoutAdmin = () => {
     setLoggedInAdmin(null);
     localStorage.removeItem("loggedInAdmin");
+    sessionStorage.removeItem("loggedInAdmin");
+    sessionStorage.removeItem("token");
   };
 
   return (
