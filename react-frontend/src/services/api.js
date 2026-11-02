@@ -1,13 +1,10 @@
 import axios from "axios";
 
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1",
-  headers: {
-    "Content-Type": "application/json",
-  },
+const api = axios.create({
+  baseURL: "http://localhost:5000/api/v1"
 });
 
-apiClient.interceptors.request.use((config) => {
+api.interceptors.request.use((config) => {
   const token = sessionStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -15,4 +12,4 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-export default apiClient;
+export default api;

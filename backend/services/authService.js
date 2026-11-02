@@ -1,56 +1,51 @@
 const bcrypt = require("bcryptjs");
-const { randomUUID } = require("crypto");
-const students = require("../data/students");
+const User = require("../models/User");
 
 async function registerStudent({ name, email, password, department }) {
-    const normalizedEmail = email.trim().toLowerCase();
+  const normalizedEmail = email.trim().toLowerCase();
 
-    const existingStudent = students.find(
-        student => student.email === normalizedEmail
-    );
+  if (await User.exists({ email: normalizedEmail })) {
+    const error = new Error("Email is already registered");
+    error.statusCode = 409;
+    throw error;
+  }
 
-    if (existingStudent) {
-        const error = new Error("Email is already registered");
-        error.statusCode = 409;
-        throw error;
-    }
+  const user = await User.create({
+    name: name.trim(),
+    email: normalizedEmail,
+    password: await bcrypt.hash(password, 12),
+    department: department.trim(),
+    role: "student"
+  });
 
-    const passwordHash = await bcrypt.hash(password, 12);
-
-    const student = {
-        id: randomUUID(),
-        name: name.trim(),
-        email: normalizedEmail,
-        passwordHash,
-        department: department.trim(),
-        createdAt: new Date().toISOString()
-    };
-
-    students.push(student);
-
-    const { passwordHash: removed, ...safeStudent } = student;
-    return safeStudent;
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    department: user.department,
+    role: user.role
+  };
 }
 
 async function loginStudent({ email, password }) {
-    const normalizedEmail = email.trim().toLowerCase();
+  const user = await User.findOne({
+    email: email.trim().toLowerCase()
+  }).select("+password");
 
-    const student = students.find(
-        item => item.email === normalizedEmail
-    );
+  const valid = user && (await bcrypt.compare(password, user.password));
+  if (!valid) {
+    const error = new Error("Invalid email or password");
+    error.statusCode = 401;
+    throw error;
+  }
 
-    if (!student || !(await bcrypt.compare(password, student.passwordHash))) {
-        const error = new Error("Invalid email or password");
-        error.statusCode = 401;
-        throw error;
-    }
-
-    return {
-        id: student.id,
-        name: student.name,
-        email: student.email,
-        department: student.department
-    };
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    department: user.department,
+    role: user.role
+  };
 }
 
 module.exports = { registerStudent, loginStudent };

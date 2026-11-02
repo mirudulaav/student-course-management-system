@@ -23,7 +23,7 @@ function getRecords(response, resource) {
 }
 
 export function StudentProvider({ children }) {
-  const { loggedInStudent } = useAuth();
+  const { loggedInStudent, loggedInAdmin } = useAuth();
   const [students, setStudents] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -80,33 +80,26 @@ export function StudentProvider({ children }) {
         String(item.courseId) === String(courseId)
     );
 
-    if (existingEnrollment) {
-      return existingEnrollment;
-    }
+    if (existingEnrollment) return existingEnrollment;
 
-    const newEnrollment = {
-      studentId: String(studentId),
-      courseId: String(courseId),
-      status: "Enrolled",
-      progress: 0
-    };
+    const response = await api.post("/enrollments", {
+      courseId: String(courseId)
+    });
 
-    const response = await api.post(
-      "/enrollments",
-      newEnrollment
-    );
-
-    setEnrollments((current) => [
-      ...current,
-      response.data
-    ]);
-
+    setEnrollments((current) => [...current, response.data]);
     return response.data;
+  }
+
+  async function unenroll(courseId) {
+    await api.delete(`/enrollments/${courseId}`);
+    setEnrollments((current) =>
+      current.filter((item) => String(item.courseId) !== String(courseId))
+    );
   }
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, loggedInStudent]);
+  }, [fetchData, loggedInStudent, loggedInAdmin]);
 
   return (
     <StudentContext.Provider
@@ -116,7 +109,8 @@ export function StudentProvider({ children }) {
         loading,
         error,
         fetchData,
-        enroll
+        enroll,
+        unenroll
       }}
     >
       {children}

@@ -2,9 +2,9 @@ const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
 const { validateRegistration } = require("../middleware/authValidation");
 const validateStudentUpdate = require("../middleware/studentValidation");
+const User = require("../models/User");
 const {
     createStudent,
-    getStudents,
     getStudent,
     updateStudent,
     deleteStudent
@@ -24,7 +24,30 @@ function requireStudentOwner(req, res, next) {
 }
 
 router.post("/", validateRegistration, createStudent);
-router.get("/", authMiddleware, getStudents);
+router.get("/", authMiddleware, async (req, res, next) => {
+    try {
+        const filter =
+            req.user.role === "admin"
+                ? { role: "student" }
+                : { _id: req.user.id, role: "student" };
+
+        const students = await User.find(filter).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: students.length,
+            data: students.map((student) => ({
+                id: String(student._id),
+                name: student.name,
+                email: student.email,
+                department: student.department,
+                role: student.role
+            }))
+        });
+    } catch (error) {
+        next(error);
+    }
+});
 router.get("/:id", authMiddleware, requireStudentOwner, getStudent);
 router.put("/:id", authMiddleware, requireStudentOwner, validateStudentUpdate(true), updateStudent);
 router.patch("/:id", authMiddleware, requireStudentOwner, validateStudentUpdate(false), updateStudent);

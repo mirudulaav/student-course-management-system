@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 
 // Import your routes
+const connectDB = require("./config/db");
 const courseRoutes = require("./routes/courseRoutes");
 const authRoutes = require("./routes/authRoutes");
 const studentRoutes = require("./routes/studentRoutes");
@@ -14,6 +15,7 @@ const notFound = require("./middleware/notFoundMiddleware");
 const errorHandler = require("./middleware/errorMiddleware");
 
 dotenv.config();
+const PORT = process.env.PORT || 5000;
 const app = express();
 
 // Middleware
@@ -46,7 +48,16 @@ app.use("/api/v1/progress", learningProgressRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+async function startServer() {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("Unable to start server:", error.message);
+    process.exit(1);
+  }
+}
+
+startServer();

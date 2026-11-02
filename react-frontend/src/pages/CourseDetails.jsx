@@ -6,6 +6,7 @@ function CourseDetails() {
   const navigate = useNavigate();
 
   const course = location.state?.course;
+  const isAdmin = sessionStorage.getItem("role") === "admin";
 
   if (!course) {
     return (
@@ -45,7 +46,7 @@ function CourseDetails() {
             </button>
 
             <span className="course-details-number">
-              COURSE {String(course.id).padStart(2, "0")}
+              {course.courseCode}
             </span>
 
             <h1>{course.courseName}</h1>
@@ -150,16 +151,18 @@ function CourseDetails() {
 
             </div>
 
-            <button
-              className="primary-button enroll-button"
-              onClick={() =>
-                navigate("/enroll-now", {
-                  state: { course }
-                })
-              }
-            >
-              Enroll Now
-            </button>
+            {!isAdmin && (
+              <button
+                className="primary-button enroll-button"
+                onClick={() =>
+                  navigate("/enroll-now", {
+                    state: { course }
+                  })
+                }
+              >
+                Enroll Now
+              </button>
+            )}
 
           </aside>
 
@@ -169,4 +172,5 @@ function CourseDetails() {
     </PageShell>
   );
 }
+
 export default CourseDetails;

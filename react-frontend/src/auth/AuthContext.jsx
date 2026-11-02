@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("loggedInStudent");
     sessionStorage.removeItem("loggedInStudent");
     sessionStorage.removeItem("token");
+    sessionStorage.removeItem("role");
   };
 
   const logoutAdmin = () => {
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("loggedInAdmin");
     sessionStorage.removeItem("loggedInAdmin");
     sessionStorage.removeItem("token");
+    sessionStorage.removeItem("role");
   };
 
   return (

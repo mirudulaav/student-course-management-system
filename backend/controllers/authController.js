@@ -25,15 +25,20 @@ async function login(req, res, next) {
 
         const expiresIn = process.env.JWT_EXPIRES_IN || "1h";
 
+        // 1. Update this token generation to use student.role dynamically from MongoDB
         const token = jwt.sign(
-            { email: student.email },
-            process.env.JWT_SECRET,
-            {
-                subject: student.id,
-                expiresIn
-            }
+        {
+            email: student.email,
+            role: student.role //hardcoded "student" to student.role
+        },
+        process.env.JWT_SECRET,
+        {
+            subject: String(student.id),
+            expiresIn: expiresIn
+        }
         );
 
+        // 2. Cleaned up responses to have a single, clean return call
         res.status(200).json({
             success: true,
             message: "Login successful",

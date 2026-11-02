@@ -1,20 +1,17 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PageShell from "../components/PageShell";
 import { useCourses } from "../context/CourseContext";
 
-function CourseCard({ course }) {
+function CourseCard({ course, isAdmin, onDelete }) {
   const navigate = useNavigate();
 
   return (
     <article className="course-item">
       <div className="course-item-top">
         <span className="course-index">
-          COURSE {String(course.id).padStart(2, "0")}
+          {course.courseCode}
         </span>
-
-        <span className="course-level">
-          {course.level}
-        </span>
+        <span className="course-level">{course.level}</span>
       </div>
 
       <div className="course-item-body">
@@ -31,9 +28,7 @@ function CourseCard({ course }) {
             }}
           />
         )}
-
         <h3>{course.courseName}</h3>
-
         <p>{course.overview}</p>
       </div>
 
@@ -43,20 +38,60 @@ function CourseCard({ course }) {
         <button
           type="button"
           onClick={() =>
-            navigate("/course-details", {
-              state: { course }
-            })
+            navigate("/course-details", { state: { course } })
           }
         >
           View Course
         </button>
       </div>
+
+      {/* Admin action buttons moved to their own row below the footer */}
+      {isAdmin && (
+        <div
+          style={{
+            display: "flex",
+            gap: "20px",
+            padding: "20px 24px 20px"
+          }}
+        >
+          <Link
+            to={`/edit-course/${course.id}`}
+            className="primary-button"
+            style={{ textAlign: "center", flex: 1, textDecoration: "none" }}
+          >
+            Edit
+          </Link>
+          <button
+            type="button"
+            className="primary-button"
+            style={{ flex: 1 }}
+            onClick={() => onDelete(course.id)}
+          >
+            Delete
+          </button>
+        </div>
+      )}
     </article>
   );
 }
 
 function Courses() {
-  const { courses, loading, error } = useCourses();
+  const { courses, loading, error, deleteCourse } = useCourses();
+  const role = sessionStorage.getItem("role");
+  const isAdmin = role === "admin";
+
+  async function handleDelete(id) {
+    if (!window.confirm("Are you sure you want to delete this course?")) {
+      return;
+    }
+    try {
+      await deleteCourse(id);
+      alert("Course deleted successfully!");
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Unable to delete course.");
+    }
+  }
 
   if (loading) {
     return (
@@ -108,6 +143,12 @@ function Courses() {
                 Choose the learning path that matches your goals.
               </p>
             </div>
+
+            {isAdmin && (
+              <Link to="/add-course" className="primary-button" style={{ textDecoration: "none" }}>
+                Add Course
+              </Link>
+            )}
           </div>
 
           <div className="courses-grid">
@@ -115,6 +156,8 @@ function Courses() {
               <CourseCard
                 key={course.id}
                 course={course}
+                isAdmin={isAdmin}
+                onDelete={handleDelete}
               />
             ))}
           </div>

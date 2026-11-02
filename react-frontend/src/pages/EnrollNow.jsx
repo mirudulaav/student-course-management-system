@@ -31,7 +31,7 @@ function EnrollNow() {
       });
     } catch (error) {
       console.error(error);
-      alert("Unable to enroll in this course.");
+      alert(error.response?.data?.message || "Unable to enroll in this course.");
     }
   }
 
@@ -132,8 +132,7 @@ function EnrollNow() {
           <div className="enroll-course-preview">
             <div className="enroll-course-top">
               <span>
-                COURSE{" "}
-                {String(course.id).padStart(2, "0")}
+                {course.courseCode}
               </span>
 
               <span>{course.level}</span>

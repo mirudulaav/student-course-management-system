@@ -1,36 +1,28 @@
 
-const { randomUUID } = require("crypto");
-const courses = require("../data/courses");
+const mongoose = require("mongoose");
+const Course = require("../models/Course");
 
-const getAllCourses = () => courses;
+const getAllCourses = () => Course.find().sort({ createdAt: 1 });
 
-const getCourseById = (id) =>
-    courses.find(course => String(course.id) === String(id));
-
-const createCourse = (courseData) => {
-    const newCourse = { ...courseData, id: randomUUID() };
-    courses.push(newCourse);
-    return newCourse;
+const getCourseById = async (id) => {
+    if (!mongoose.isValidObjectId(id)) return null;
+    return Course.findById(id);
 };
 
-const updateCourse = (id, courseData) => {
-    const index = courses.findIndex(
-        course => String(course.id) === String(id)
-    );
-    if (index === -1) return null;
+const createCourse = (courseData) => Course.create(courseData);
 
-    courses[index] = { ...courses[index], ...courseData, id };
-    return courses[index];
+const updateCourse = async (id, courseData) => {
+    if (!mongoose.isValidObjectId(id)) return null;
+    return Course.findByIdAndUpdate(id, courseData, {
+        new: true,
+        runValidators: true
+    });
 };
 
-const deleteCourse = (id) => {
-    const index = courses.findIndex(
-        course => String(course.id) === String(id)
-    );
-    if (index === -1) return false;
-
-    courses.splice(index, 1);
-    return true;
+const deleteCourse = async (id) => {
+    if (!mongoose.isValidObjectId(id)) return false;
+    const deleted = await Course.findByIdAndDelete(id);
+    return Boolean(deleted);
 };
 
 module.exports = {

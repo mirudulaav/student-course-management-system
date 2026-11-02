@@ -16,7 +16,8 @@ function StudentCourses() {
 
   const {
     enrollments,
-    loading: enrollmentLoading
+    loading: enrollmentLoading,
+    unenroll
   } = useStudents();
 
   if (!loggedInStudent) {
@@ -111,16 +112,10 @@ function StudentCourses() {
                   key={enrollment.id}
                 >
                   <div className="student-course-top">
-                    <span>
-                      COURSE{" "}
-                      {String(
-                        enrollment.courseId
-                      ).padStart(2, "0")}
-                    </span>
+                    <span>{course?.courseCode || "COURSE"}</span>
 
                     <span>
-                      {enrollment.status ||
-                        "In Progress"}
+                      {enrollment.status === "completed" ? "Completed" : "In Progress"}
                     </span>
                   </div>
 
@@ -191,6 +186,21 @@ function StudentCourses() {
                     }
                   >
                     View Enrollment
+                  </button>
+
+                  <button
+                    type="button"
+                    className="back-button"
+                    onClick={async () => {
+                      if (!window.confirm("Unenroll from this course?")) return;
+                      try {
+                        await unenroll(enrollment.courseId);
+                      } catch (err) {
+                        alert(err.response?.data?.message || "Unable to unenroll");
+                      }
+                    }}
+                  >
+                    Unenroll
                   </button>
                 </article>
               );

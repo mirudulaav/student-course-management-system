@@ -15,7 +15,10 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [adminError, setAdminError] = useState("");
+  
   const [loading, setLoading] = useState(false);
+  const [adminLoading, setAdminLoading] = useState(false);
 
   async function handleStudentLogin(e) {
     e.preventDefault();
@@ -23,6 +26,7 @@ function Login() {
     try {
       setLoading(true);
       setError("");
+      setAdminError("");
 
       const result = await authenticateStudent({
         email: email.trim(),
@@ -34,6 +38,7 @@ function Login() {
       }
 
       sessionStorage.setItem("token", result.token);
+      sessionStorage.setItem("role", result.student.role);
       sessionStorage.setItem(
         "loggedInStudent",
         JSON.stringify(result.student)
@@ -53,33 +58,39 @@ function Login() {
     }
   }
 
-  function handleAdminLogin(e) {
+  async function handleAdminLogin(e) {
     e.preventDefault();
 
     const form = e.target;
+    const adminEmail = form.email.value.trim();
+    const adminPassword = form.password.value;
 
-    const adminEmail =
-      form.email.value.trim();
+    try {
+      // 2. Use setAdminLoading instead of setLoading
+      setAdminLoading(true);
+      setError("");
+      setAdminError("");
 
-    const adminPassword =
-      form.password.value;
+      const result = await authenticateStudent({
+        email: adminEmail,
+        password: adminPassword
+      });
 
-    if (
-      adminEmail === "admin@gmail.com" &&
-      adminPassword === "admin123"
-    ) {
-      const admin = {
-        email: "admin@gmail.com",
-        role: "admin"
-      };
+      if (!result?.token || result.student?.role !== "admin") {
+        throw new Error("Not an admin account");
+      }
 
-      loginAdmin(admin);
+      sessionStorage.setItem("token", result.token);
+      sessionStorage.setItem("role", result.student.role);
 
+      loginAdmin(result.student);
       navigate("/admin-dashboard");
-    } else {
-      setError(
-        "Invalid admin email or password."
-      );
+    } catch (err) {
+      console.error(err);
+      setAdminError("Invalid admin email or password.");
+    } finally {
+      // 3. Reset adminLoading in finally
+      setAdminLoading(false);
     }
   }
 
@@ -173,6 +184,12 @@ function Login() {
               </p>
 
               <form onSubmit={handleAdminLogin}>
+                {adminError && (
+                  <p className="form-error">
+                    {adminError}
+                  </p>
+                )}
+
                 <div className="input-group">
                   <label>Email</label>
 
@@ -195,11 +212,15 @@ function Login() {
                   />
                 </div>
 
+                {/* 4. Add disabled and dynamic text for admin button */}
                 <button
                   type="submit"
                   className="auth-button admin-button"
+                  disabled={adminLoading}
                 >
-                  Login as Admin
+                  {adminLoading
+                    ? "Logging in..."
+                    : "Login as Admin"}
                 </button>
               </form>
             </div>
