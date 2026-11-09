@@ -21,7 +21,15 @@ function Navbar() {
 
       <div
         className="logo"
-        onClick={() => navigate("/")}
+        onClick={() =>
+          navigate(
+            loggedInStudent
+              ? "/student-courses"
+              : loggedInAdmin
+                ? "/admin-dashboard"
+                : "/"
+          )
+        }
         style={{ cursor: "pointer" }}
       >
         SCMS
@@ -29,11 +37,13 @@ function Navbar() {
 
       <ul className="nav-links">
 
-        <li>
-          <NavLink to="/" end>
-            Home
-          </NavLink>
-        </li>
+        {!loggedInStudent && !loggedInAdmin && (
+          <li>
+            <NavLink to="/" end>
+              Home
+            </NavLink>
+          </li>
+        )}
 
         {!loggedInStudent && !loggedInAdmin && (
           <>
@@ -54,14 +64,14 @@ function Navbar() {
         {loggedInStudent && (
           <>
             <li>
-              <NavLink to="/student-dashboard">
-                Dashboard
+              <NavLink to="/student-courses">
+                My Courses
               </NavLink>
             </li>
 
             <li>
-              <NavLink to="/student-courses">
-                My Courses
+              <NavLink to="/learning-progress">
+                My Progress
               </NavLink>
             </li>
 

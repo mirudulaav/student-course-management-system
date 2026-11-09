@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { useCourses } from "../context/CourseContext";
@@ -5,6 +6,7 @@ import { useStudents } from "../context/StudentContext";
 import PageShell from "../components/PageShell";
 
 function Reports() {
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const { loggedInAdmin } = useAuth();
@@ -53,12 +55,12 @@ function Reports() {
 
   const completed = enrollments.filter(
     (enrollment) =>
-      enrollment.status === "Completed"
+      String(enrollment.status).toLowerCase() === "completed"
   ).length;
 
   const inProgress = enrollments.filter(
     (enrollment) =>
-      enrollment.status !== "Completed"
+      String(enrollment.status).toLowerCase() !== "completed"
   ).length;
 
   const averageProgress =
@@ -109,6 +111,31 @@ function Reports() {
       course.progress / course.enrollments
     )
   }));
+
+  const progressRows = enrollments
+    .map((enrollment) => {
+      const student = students.find(
+        (item) => String(item.id) === String(enrollment.studentId)
+      );
+      const course = courses.find(
+        (item) => String(item.id) === String(enrollment.courseId)
+      );
+
+      return {
+        id: enrollment.id,
+        studentName: student?.name || "Unknown student",
+        email: student?.email || "",
+        courseName: course?.courseName || "Course",
+        progress: Number(enrollment.progress || 0),
+        status: enrollment.status
+      };
+    })
+    .filter((row) =>
+      `${row.studentName} ${row.email}`
+        .toLowerCase()
+        .includes(search.trim().toLowerCase())
+    )
+    .sort((a, b) => a.studentName.localeCompare(b.studentName));
 
   return (
     <PageShell>
@@ -271,6 +298,58 @@ function Reports() {
                       </tr>
                     )
                   )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        <section className="course-report-section">
+          <div className="report-section-header">
+            <div>
+              <span className="details-label">STUDENT ANALYSIS</span>
+              <h2>Student Progress Report</h2>
+              <p>See how each student is progressing in each course.</p>
+            </div>
+          </div>
+
+          <input
+            type="search"
+            placeholder="Search by student name or email"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            aria-label="Search by student name or email"
+            style={{ width: "100%", maxWidth: 360, marginBottom: 16, padding: 10 }}
+          />
+
+          {progressRows.length === 0 ? (
+            <p>No matching enrollment data.</p>
+          ) : (
+            <div className="course-report-table-wrapper">
+              <table className="course-report-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Email</th>
+                    <th>Course</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {progressRows.map((row) => (
+                    <tr key={row.id}>
+                      <td>{row.studentName}</td>
+                      <td>{row.email}</td>
+                      <td>{row.courseName}</td>
+                      <td>{row.progress}%</td>
+                      <td>
+                        {String(row.status).toLowerCase() === "completed"
+                          ? "Completed"
+                          : "In Progress"}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

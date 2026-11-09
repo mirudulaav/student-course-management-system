@@ -60,10 +60,10 @@ function Enrollment() {
           <button
             className="back-button"
             onClick={() =>
-              navigate("/student-dashboard")
+              navigate("/student-courses")
             }
           >
-            ← Dashboard
+            ← My Courses
           </button>
         </section>
 
@@ -157,16 +157,16 @@ function Enrollment() {
 
             <p>
               Continue your learning journey and track your
-              progress from your student dashboard.
+              progress from My Courses.
             </p>
 
             <button
               className="primary-button"
               onClick={() =>
-                navigate("/student-dashboard")
+                navigate("/student-courses")
               }
             >
-              Go to Dashboard
+              My Courses
             </button>
 
             <button

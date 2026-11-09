@@ -45,7 +45,7 @@ function Login() {
       );
       loginStudent(result.student);
 
-      navigate("/student-dashboard");
+      navigate("/student-courses");
     } catch (error) {
       console.error(error);
 
