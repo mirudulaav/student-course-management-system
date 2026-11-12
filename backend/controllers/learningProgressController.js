@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const LearningProgress = require("../models/LearningProgress");
 const Enrollment = require("../models/Enrollment");
+const getPagination = require("../utils/pagination");
+const serializeCourse = require("../utils/serializeCourse");
 
 async function updateProgress(req, res, next) {
   try {
@@ -54,20 +56,35 @@ async function updateProgress(req, res, next) {
 
 async function getMyProgress(req, res, next) {
   try {
-    const enrollments = await Enrollment.find({ student: req.user.id }).select("course");
+    const { page, limit, skip } = getPagination(req.query);
+    const enrollments = await Enrollment.find({ student: req.user.id })
+      .select("course")
+      .lean();
     const courseIds = enrollments.map((e) => e.course);
 
-    const progress = await LearningProgress.find({
+    const filter = {
       student: req.user.id,
       course: { $in: courseIds }
-    })
-      .populate("course", "courseName courseCode")
-      .sort({ updatedAt: -1 });
+    };
+    const [progress, total] = await Promise.all([
+      LearningProgress.find(filter)
+        .populate("course", "courseName courseCode")
+        .sort({ updatedAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      LearningProgress.countDocuments(filter)
+    ]);
 
     res.status(200).json({
       message: "Learning progress fetched successfully",
-      totalCourses: progress.length,
-      progress
+      totalCourses: total,
+      page,
+      limit,
+      progress: progress.map((entry) => ({
+        ...entry,
+        course: serializeCourse(entry.course)
+      }))
     });
   } catch (error) {
     next(error);

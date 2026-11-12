@@ -1,4 +1,5 @@
-
+const Course = require("../models/Course");
+const getPagination = require("../utils/pagination");
 const {
     getAllCourses,
     getCourseById,
@@ -9,8 +10,19 @@ const {
 
 const getCourses = async (req, res, next) => {
     try {
-        const courses = await getAllCourses();
-        res.status(200).json({ success: true, count: courses.length, data: courses });
+        const pagination = getPagination(req.query);
+        const [courses, total] = await Promise.all([
+            getAllCourses(pagination),
+            Course.countDocuments()
+        ]);
+        res.status(200).json({
+            success: true,
+            count: courses.length,
+            total,
+            page: pagination.page,
+            limit: pagination.limit,
+            data: courses
+        });
     } catch (error) {
         next(error);
     }

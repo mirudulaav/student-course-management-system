@@ -8,20 +8,54 @@ const {
 } = require("../controllers/courseController");
 
 const {
-    validateCourse,
-    validateCoursePatch
-} = require("../middleware/courseValidation");
+    courseIdValidation,
+    courseCreateValidation,
+    courseUpdateValidation,
+    coursePatchValidation
+} = require("../validators/courseValidators");
+const paginationValidation = require("../validators/paginationValidators");
+const validateRequest = require("../middleware/validateRequest");
 const authMiddleware = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
-router.get("/", getCourses);
-router.get("/:id", getCourse);
+router.get("/", paginationValidation, validateRequest, getCourses);
+router.get("/:id", courseIdValidation, validateRequest, getCourse);
 
-router.post("/", authMiddleware, authorizeRoles("admin"), validateCourse, addCourse);
-router.put("/:id", authMiddleware, authorizeRoles("admin"), validateCourse, editCourse);
-router.patch("/:id", authMiddleware, authorizeRoles("admin"), validateCoursePatch, editCourse);
-router.delete("/:id", authMiddleware, authorizeRoles("admin"), removeCourse);
+router.post(
+    "/",
+    authMiddleware,
+    authorizeRoles("admin"),
+    courseCreateValidation,
+    validateRequest,
+    addCourse
+);
+router.put(
+    "/:id",
+    authMiddleware,
+    authorizeRoles("admin"),
+    courseIdValidation,
+    courseUpdateValidation,
+    validateRequest,
+    editCourse
+);
+router.patch(
+    "/:id",
+    authMiddleware,
+    authorizeRoles("admin"),
+    courseIdValidation,
+    coursePatchValidation,
+    validateRequest,
+    editCourse
+);
+router.delete(
+    "/:id",
+    authMiddleware,
+    authorizeRoles("admin"),
+    courseIdValidation,
+    validateRequest,
+    removeCourse
+);
 
 module.exports = router;

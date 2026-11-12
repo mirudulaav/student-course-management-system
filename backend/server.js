@@ -1,6 +1,8 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
+const helmet = require("helmet");
 const morgan = require("morgan");
 
 // Import your routes
@@ -11,18 +13,39 @@ const studentRoutes = require("./routes/studentRoutes");
 const enrollmentRoutes = require("./routes/enrollmentRoutes");
 const learningProgressRoutes = require("./routes/learningProgressRoutes");
 
-const notFound = require("./middleware/notFoundMiddleware");
 const errorHandler = require("./middleware/errorMiddleware");
 
-dotenv.config();
 const PORT = process.env.PORT || 5000;
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowedOrigins = (
+  process.env.CLIENT_URL || "http://localhost:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(helmet());
+app.use(morgan("combined"));
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Allow Postman/curl (no origin) and trusted frontends
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      callback(
+        Object.assign(
+          new Error("Origin not allowed by CORS"),
+          { status: 403 }
+        )
+      );
+    }
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan("dev"));
 
 // Test and Health Check Routes
 app.get("/", (req, res) => {
@@ -44,9 +67,20 @@ app.use("/api/v1/courses", courseRoutes);
 app.use("/api/v1/enrollments", enrollmentRoutes);
 app.use("/api/v1/progress", learningProgressRoutes);
 
-// Error Handling Middleware (Must be last)
-app.use(notFound);
+app.use((req, res) =>
+  res.status(404).json({ message: "API endpoint not found" })
+);
 app.use(errorHandler);
+
+process.on("unhandledRejection", (error) => {
+  console.error("Unhandled promise rejection:", error);
+  process.exit(1);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught exception:", error);
+  process.exit(1);
+});
 
 async function startServer() {
   try {

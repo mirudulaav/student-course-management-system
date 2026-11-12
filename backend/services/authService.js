@@ -30,7 +30,7 @@ async function registerStudent({ name, email, password, department }) {
 async function loginStudent({ email, password }) {
   const user = await User.findOne({
     email: email.trim().toLowerCase()
-  }).select("+password");
+  }).select("+password").lean();
 
   const valid = user && (await bcrypt.compare(password, user.password));
   if (!valid) {

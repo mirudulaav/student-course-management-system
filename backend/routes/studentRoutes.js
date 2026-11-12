@@ -1,7 +1,13 @@
 const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
-const { validateRegistration } = require("../middleware/authValidation");
-const validateStudentUpdate = require("../middleware/studentValidation");
+const { registerValidation } = require("../validators/authValidators");
+const {
+    studentIdValidation,
+    studentUpdateValidation
+} = require("../validators/studentValidators");
+const paginationValidation = require("../validators/paginationValidators");
+const validateRequest = require("../middleware/validateRequest");
+const getPagination = require("../utils/pagination");
 const User = require("../models/User");
 const {
     createStudent,
@@ -23,19 +29,26 @@ function requireStudentOwner(req, res, next) {
     next();
 }
 
-router.post("/", validateRegistration, createStudent);
-router.get("/", authMiddleware, async (req, res, next) => {
+router.post("/", registerValidation, validateRequest, createStudent);
+router.get("/", authMiddleware, paginationValidation, validateRequest, async (req, res, next) => {
     try {
+        const { page, limit, skip } = getPagination(req.query);
         const filter =
             req.user.role === "admin"
                 ? { role: "student" }
                 : { _id: req.user.id, role: "student" };
 
-        const students = await User.find(filter).sort({ createdAt: -1 });
+        const [students, total] = await Promise.all([
+            User.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+            User.countDocuments(filter)
+        ]);
 
         res.status(200).json({
             success: true,
             count: students.length,
+            total,
+            page,
+            limit,
             data: students.map((student) => ({
                 id: String(student._id),
                 name: student.name,
@@ -48,9 +61,39 @@ router.get("/", authMiddleware, async (req, res, next) => {
         next(error);
     }
 });
-router.get("/:id", authMiddleware, requireStudentOwner, getStudent);
-router.put("/:id", authMiddleware, requireStudentOwner, validateStudentUpdate(true), updateStudent);
-router.patch("/:id", authMiddleware, requireStudentOwner, validateStudentUpdate(false), updateStudent);
-router.delete("/:id", authMiddleware, requireStudentOwner, deleteStudent);
+router.get(
+    "/:id",
+    authMiddleware,
+    studentIdValidation,
+    validateRequest,
+    requireStudentOwner,
+    getStudent
+);
+router.put(
+    "/:id",
+    authMiddleware,
+    studentIdValidation,
+    studentUpdateValidation(true),
+    validateRequest,
+    requireStudentOwner,
+    updateStudent
+);
+router.patch(
+    "/:id",
+    authMiddleware,
+    studentIdValidation,
+    studentUpdateValidation(false),
+    validateRequest,
+    requireStudentOwner,
+    updateStudent
+);
+router.delete(
+    "/:id",
+    authMiddleware,
+    studentIdValidation,
+    validateRequest,
+    requireStudentOwner,
+    deleteStudent
+);
 
 module.exports = router;

@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Enrollment = require("../models/Enrollment");
 const Course = require("../models/Course");
 const LearningProgress = require("../models/LearningProgress");
+const getPagination = require("../utils/pagination");
+const serializeCourse = require("../utils/serializeCourse");
 
 function flatten(enrollment, progressMap) {
   const key = `${enrollment.student}-${enrollment.course}`;
@@ -43,8 +45,17 @@ async function enrollCourse(req, res, next) {
 async function getEnrollments(req, res, next) {
   try {
     const filter = req.user.role === "admin" ? {} : { student: req.user.id };
-    const enrollments = await Enrollment.find(filter).sort({ enrolledAt: -1 });
-    const progress = await LearningProgress.find(filter);
+    const { page, limit, skip } = getPagination(req.query);
+    const [enrollments, total] = await Promise.all([
+      Enrollment.find(filter).sort({ enrolledAt: -1 }).skip(skip).limit(limit).lean(),
+      Enrollment.countDocuments(filter)
+    ]);
+    const progressFilter = enrollments.length
+      ? {
+          $or: enrollments.map(({ student, course }) => ({ student, course }))
+        }
+      : { _id: null };
+    const progress = await LearningProgress.find(progressFilter).lean();
 
     const progressMap = new Map(
       progress.map((p) => [`${p.student}-${p.course}`, p.progressPercentage])
@@ -53,6 +64,9 @@ async function getEnrollments(req, res, next) {
     res.status(200).json({
       success: true,
       count: enrollments.length,
+      total,
+      page,
+      limit,
       data: enrollments.map((enrollment) => flatten(enrollment, progressMap))
     });
   } catch (error) {
@@ -62,14 +76,27 @@ async function getEnrollments(req, res, next) {
 
 async function getMyCourses(req, res, next) {
   try {
-    const enrollments = await Enrollment.find({ student: req.user.id })
-      .populate("course")
-      .sort({ enrolledAt: -1 });
+    const { page, limit, skip } = getPagination(req.query);
+    const filter = { student: req.user.id };
+    const [enrollments, total] = await Promise.all([
+      Enrollment.find(filter)
+        .populate("course")
+        .sort({ enrolledAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Enrollment.countDocuments(filter)
+    ]);
 
     res.status(200).json({
       message: "Enrolled courses fetched successfully",
-      totalEnrollments: enrollments.length,
-      enrollments
+      totalEnrollments: total,
+      page,
+      limit,
+      enrollments: enrollments.map((enrollment) => ({
+        ...enrollment,
+        course: serializeCourse(enrollment.course)
+      }))
     });
   } catch (error) {
     next(error);
