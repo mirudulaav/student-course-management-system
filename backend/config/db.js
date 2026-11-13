@@ -1,5 +1,9 @@
 const dns = require("dns");
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
+// Local-only DNS workaround; hosting platforms resolve DNS themselves
+if (process.env.NODE_ENV !== "production") {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+}
 const mongoose = require("mongoose");
 
 async function connectDB() {

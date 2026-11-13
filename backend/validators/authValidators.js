@@ -37,8 +37,9 @@ const loginValidation = [
   body("password")
     .isString().withMessage("Password must be text")
     .bail()
-    .isLength({ min: 12, max: 72 })
-    .withMessage("Password must be between 12 and 72 characters")
+    .notEmpty().withMessage("Password is required")
+    .isLength({ max: 72 })
+    .withMessage("Password must be at most 72 characters")
 ];
 
 module.exports = { registerValidation, loginValidation };

@@ -18,6 +18,9 @@ const errorHandler = require("./middleware/errorMiddleware");
 const PORT = process.env.PORT || 5000;
 const app = express();
 
+// Behind Vercel's proxy: use the real client IP for rate limiting
+app.set("trust proxy", 1);
+
 // Middleware
 const allowedOrigins = (
   process.env.CLIENT_URL || "http://localhost:5173"
