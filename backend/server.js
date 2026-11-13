@@ -64,6 +64,16 @@ app.get("/api/health", (req, res) => {
 });
 
 // API Routes (Mounted under /api/v1 to prevent 404 errors)
+// Make sure MongoDB is connected before any API route runs
+app.use("/api/v1", async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/students", studentRoutes);
 app.use("/api/v1/courses", courseRoutes);
@@ -74,16 +84,6 @@ app.use((req, res) =>
   res.status(404).json({ message: "API endpoint not found" })
 );
 app.use(errorHandler);
-
-process.on("unhandledRejection", (error) => {
-  console.error("Unhandled promise rejection:", error);
-  process.exit(1);
-});
-
-process.on("uncaughtException", (error) => {
-  console.error("Uncaught exception:", error);
-  process.exit(1);
-});
 
 async function startServer() {
   try {
@@ -97,4 +97,20 @@ async function startServer() {
   }
 }
 
-startServer();
+// Only listen and install exit-on-error handlers when run directly
+// (npm start). On Vercel the exported app is used instead.
+if (require.main === module) {
+  process.on("unhandledRejection", (error) => {
+    console.error("Unhandled promise rejection:", error);
+    process.exit(1);
+  });
+
+  process.on("uncaughtException", (error) => {
+    console.error("Uncaught exception:", error);
+    process.exit(1);
+  });
+
+  startServer();
+}
+
+module.exports = app;
